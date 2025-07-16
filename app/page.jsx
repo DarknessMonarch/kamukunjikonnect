@@ -14,7 +14,6 @@ import Product2 from "@/public/assets/product2.jpg";
 import Testimonials from "./components/Testimonials";
 import NewProduct from "@/app/components/NewProduct";
 import LimitedOffers from "./components/LimitedOffers";
-import LoadingLogo from "@/app/components/loadingLogo";
 
 import { BiSupport as SupportIcon } from "react-icons/bi";
 import { FaShippingFast as ShippingIcon } from "react-icons/fa";
@@ -115,8 +114,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Only set up interval if we have featured products
-    if (featuredProducts.length === 0) return;
+
 
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % featuredProducts.length);
@@ -140,95 +138,103 @@ export default function Home() {
     alert(`Viewing ${product.name}`);
   };
 
-  if (loading) {
-    return (
-      <div className={styles.homeContainer}>
-        <LoadingLogo />
-      </div>
-    );
-  }
-
-  // Safely get current product with fallback
   const currentProduct = featuredProducts[currentSlide] || featuredProducts[0];
 
-  // Don't render if no products are available
-  if (!currentProduct) {
-    return (
-      <div className={styles.homeContainer}>
-        <div>No products available</div>
-      </div>
-    );
-  }
+  const HeroSkeleton = () => (
+    <div className={`${styles.heroCard} skeleton`}></div>
+  );
+
+  const SideProductsSkeleton = () => (
+    <div className={styles.sideProducts}>
+      {[1, 2].map((index) => (
+        <div key={index} className={`${styles.loadingProductCard} skeleton`}></div>
+      ))}
+    </div>
+  );
 
   return (
     <main className={styles.homeContainer}>
       <div className={styles.mainContent}>
-        <div className={styles.heroCard}>
-          <div className={styles.productInfo}>
-            <h2>{currentProduct.name}</h2>
-            <p>{currentProduct.description}</p>
-            <button
-              className={styles.shopButton}
-              onClick={() => handleShopNow(currentProduct.id)}
-            >
-              Shop Now
-            </button>
-          </div>
-          <Image
-            src={currentProduct.image}
-            alt={currentProduct.name}
-            fill
-            sizes="100%"
-            quality={100}
-            style={{ objectFit: "cover" }}
-            priority={true}
-            className={styles.herocardImage}
-          />
-
-          <div className={styles.pagination}>
-            {featuredProducts.map((_, index) => (
-              <div
-                key={index}
-                className={`${styles.paginationDot} ${
-                  index === currentSlide ? styles.active : ""
-                }`}
-                onClick={() => handleSlideChange(index)}
-              ></div>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.sideProducts}>
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className={styles.productCard}
-              onClick={() => handleProductClick(product)}
-            >
-              <div className={styles.productDetails}>
-                <h3>{product.name}</h3>
-                <div className={styles.pricing}>
-                  <span>Ksh {product.currentPrice}</span>
-                  <span>Ksh {product.originalPrice}</span>
-                </div>
+        {loading ? (
+          <>
+            <HeroSkeleton />
+            <SideProductsSkeleton />
+          </>
+        ) : (
+          <>
+            {/* Hero Section */}
+            <div className={styles.heroCard}>
+              <div className={styles.productInfo}>
+                <h2>{currentProduct?.name}</h2>
+                <p>{currentProduct?.description}</p>
+                <button
+                  className={styles.shopButton}
+                  onClick={() => handleShopNow(currentProduct?.id)}
+                >
+                  Shop Now
+                </button>
               </div>
-              <div className={styles.productImageContainer}>
+              {currentProduct && (
                 <Image
-                  src={product.image}
-                  alt={product.name}
+                  src={currentProduct.image}
+                  alt={currentProduct.name}
                   fill
                   sizes="100%"
                   quality={100}
-                  style={{ objectFit: "contain" }}
+                  style={{ objectFit: "cover" }}
                   priority={true}
-                  className={styles.productImage}
+                  className={styles.herocardImage}
                 />
+              )}
+
+              <div className={styles.pagination}>
+                {featuredProducts.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`${styles.paginationDot} ${
+                      index === currentSlide ? styles.active : ""
+                    }`}
+                    onClick={() => handleSlideChange(index)}
+                  ></div>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
+
+            {/* Side Products */}
+            <div className={styles.sideProducts}>
+              {products.map((product) => (
+                <div
+                  key={product.id}
+                  className={styles.productCard}
+                  onClick={() => handleProductClick(product)}
+                >
+                  <div className={styles.productDetails}>
+                    <h3>{product.name}</h3>
+                    <div className={styles.pricing}>
+                      <span>Ksh {product.currentPrice}</span>
+                      <span>Ksh {product.originalPrice}</span>
+                    </div>
+                  </div>
+                  <div className={styles.productImageContainer}>
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      sizes="100%"
+                      quality={100}
+                      style={{ objectFit: "contain" }}
+                      priority={true}
+                      className={styles.productImage}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
+      {/* Static content that renders immediately */}
       <div className={styles.features}>
         {Features.map((feature) => {
           const IconComponent = feature.icon;
@@ -243,6 +249,7 @@ export default function Home() {
           );
         })}
       </div>
+
       <Category />
       <Product />
       <Advert />

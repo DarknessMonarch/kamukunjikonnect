@@ -1,49 +1,42 @@
 @media screen {
   .cartItemContainer {
-    gap: 15px;
+    gap: 10px;
     width: 100%;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 15px;
-    border-radius: var(--radius-md);
-    background-color: var(--light-background-color);
-    border: 1px solid var(--border-color);
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
-
-  .cartItemContainer:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-light);
-  }
-
-  .cartItemImageWrapper {
-    width: 80px;
-    height: 80px;
-    display: flex;
+    padding: 10px;
+    height: 150px;
     overflow: hidden;
     position: relative;
     align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-sm);
-    background-color: var(--section-background);
+    border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
+  }
+
+  .cartItemImageWrapper {
+    width: 100px;
+    height: 100%;
+    display: flex;
     flex-shrink: 0;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
   }
 
   .cartItemImage {
-    width: 60px;
-    height: 60px;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
   }
 
   .cartItemDetails {
     flex: 1;
+    gap: 10px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    min-width: 0;
+    min-width: 0; 
+    overflow: hidden;
+
   }
 
   .cartItemName {
@@ -51,67 +44,57 @@
     font-family: var(--font-family-primary);
     font-weight: var(--font-weight-medium);
     color: var(--primary-color);
-    margin: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  .cartItemPricing {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .cartItemPrice {
-    font-size: 1rem;
-    font-family: var(--font-family-primary);
-    font-weight: var(--font-weight-semibold);
-    color: var(--primary-color);
+    width: 100%;
     margin: 0;
   }
 
-  .cartItemTotal {
-    font-size: 0.9rem;
+  .cartItemPricing {
+    gap: 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .cartItemPricing h3 {
+    font-size: .9rem;
     font-family: var(--font-family-primary);
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-medium);
     color: var(--secondary-color);
   }
 
   .cartItemActions {
+    gap: 10px;
     display: flex;
-    flex-direction: column;
-    gap: 12px;
     align-items: center;
-    flex-shrink: 0;
+    justify-content: space-between;
   }
 
   .quantityControls {
+    gap: 5px;
+    padding: 5px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    background-color: var(--section-background);
+    border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    padding: 4px;
+
   }
 
   .quantityButton {
-    width: 32px;
-    height: 32px;
+    width: 24px;  
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: none;
     background-color: transparent;
-    border-radius: var(--radius-xs);
-    cursor: pointer;
     transition: all 0.2s ease;
     color: var(--primary-color);
+
   }
 
   .quantityButton:hover:not(:disabled) {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
     color: var(--background-color);
   }
 
@@ -121,16 +104,20 @@
   }
 
   .quantityIcon {
-    font-size: 16px;
+    flex-shrink: 0;
+    font-size: 18px;
   }
 
   .quantityDisplay {
-    font-size: 1rem;
-    font-family: var(--font-family-primary);
-    font-weight: var(--font-weight-medium);
-    color: var(--primary-color);
+    display: flex;
     min-width: 20px;
+    font-size: 1rem;
     text-align: center;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    font-weight: var(--font-weight-light);
+    font-family: var(--font-family-primary);
   }
 
   .removeButton {
@@ -138,20 +125,18 @@
     height: 36px;
     display: flex;
     align-items: center;
+    color: var(--warm-gray);
     justify-content: center;
-    border: none;
+    transition: all 0.2s ease;
     background-color: transparent;
     border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    color: var(--warm-gray);
     border: 1px solid var(--border-color);
   }
 
   .removeButton:hover:not(:disabled) {
-    background-color: #ef4444;
-    color: white;
-    border-color: #ef4444;
+    background-color: var(--error-color);
+    border-color: var(--error-color);
+    color: var(--light-color);
   }
 
   .removeButton:disabled {
@@ -161,69 +146,5 @@
 
   .removeIcon {
     font-size: 18px;
-  }
-}
-
-/* Mobile responsive */
-@media only screen and (max-width: 47.999em) {
-  .cartItemContainer {
-    flex-direction: column;
-    padding: 12px;
-  }
-
-  .cartItemImageWrapper {
-    width: 100px;
-    height: 100px;
-  }
-
-  .cartItemImage {
-    width: 80px;
-    height: 80px;
-  }
-
-  .cartItemDetails {
-    text-align: center;
-    width: 100%;
-  }
-
-  .cartItemName {
-    white-space: normal;
-    text-align: center;
-  }
-
-  .cartItemActions {
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-  }
-}
-
-/* Tablet responsive */
-@media only screen and (min-width: 48em) and (max-width: 63.999em) {
-  .cartItemImageWrapper {
-    width: 90px;
-    height: 90px;
-  }
-
-  .cartItemImage {
-    width: 70px;
-    height: 70px;
-  }
-}
-
-/* Desktop responsive */
-@media only screen and (min-width: 64em) {
-  .cartItemContainer {
-    padding: 20px;
-  }
-
-  .cartItemImageWrapper {
-    width: 100px;
-    height: 100px;
-  }
-
-  .cartItemImage {
-    width: 80px;
-    height: 80px;
   }
 }

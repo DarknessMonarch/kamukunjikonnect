@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import styles from "@/app/style/limitedOffers.module.css";
 import Spoons from "@/public/assets/spoons.png";
+import Banner from "@/public/assets/banner.png";
 
 export default function LimitedOffers() {
   const [products, setProducts] = useState([]);
@@ -76,10 +77,42 @@ export default function LimitedOffers() {
     return num.toString().padStart(2, "0");
   };
 
- 
+  if (loading) {
+    return (
+      <div className={`${styles.limitedOffersHeroLoading} skeleton`}></div>
+    );
+  }
 
   if (!featuredProduct) {
-    return null
+    return (
+      <div  className={`${styles.limitedOffersHero} ${styles.limitedOffersHeroNothing}`}>
+        <div className={styles.limitedOffersTextSection}>
+          <div className={styles.limitedOffersBadge}>Limited Offer</div>
+          <h1>Enhance Your Kitchen Experience</h1>
+          <p>No featured product available at the moment</p>
+
+          <div className={styles.limitedOffersCountdown}>
+            <div className={styles.limitedOffersCountdownItem}>
+              <h3>00</h3>
+              <span>Days</span>
+            </div>
+            <div className={styles.limitedOffersCountdownItem}>
+              <h3>00</h3>
+              <span>Hours</span>
+            </div>
+            <div className={styles.limitedOffersCountdownItem}>
+              <h3>00</h3>
+              <span>Minutes</span>
+            </div>
+            <div className={styles.limitedOffersCountdownItem}>
+              <h3>00</h3>
+              <span>Seconds</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    );
   }
 
   return (
@@ -89,9 +122,7 @@ export default function LimitedOffers() {
           {featuredProduct?.badge}
         </div>
         <h1>Enhance Your Kitchen Experience</h1>
-        <p>
-            {featuredProduct?.description}
-        </p>
+        <p>{featuredProduct?.description}</p>
 
         <div className={styles.limitedOffersCountdown}>
           <div className={styles.limitedOffersCountdownItem}>

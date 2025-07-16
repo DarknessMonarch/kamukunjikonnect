@@ -5,9 +5,10 @@ import Image from "next/image";
 import { toast } from "sonner";
 import Logo from "@/public/assets/logo.png";
 import { useAuthStore } from "@/app/store/Auth";
-import { useCartStore } from "@/app/store/Cart"; 
-import styles from "@/app/style/navbar.module.css";
+import { useCartStore } from "@/app/store/Cart";
 import Dropdown from "@/app/components/Dropdown";
+import styles from "@/app/style/navbar.module.css";
+import { useDrawerStore } from "@/app/store/Drawer";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 
@@ -316,7 +317,7 @@ const ProductDropdown = ({ isOpen, onClose }) => {
             className={styles.seeMoreLink}
             onClick={onClose}
           >
-            View More  →
+            View More →
           </Link>
         </div>
       </div>
@@ -575,7 +576,7 @@ const CartSection = ({ onCartClick }) => {
   const subtotal = getSubtotal() || 0;
 
   return (
-    <div 
+    <div
       className={styles.cartSection}
       onClick={onCartClick}
       role="button"
@@ -598,8 +599,12 @@ const CartSection = ({ onCartClick }) => {
 };
 
 export default function Navbar() {
-  // Updated to use cart store for drawer functionality
-  const { isDrawerOpen, toggleDrawer, closeDrawer } = useCartStore();
+  // Using drawer store for mobile menu functionality
+  const { isOpen: isMobileMenuOpen, toggleOpen: toggleMobileMenu, setClose: closeMobileMenu } = useDrawerStore();
+  
+  // Using cart store only for cart functionality
+  const { isDrawerOpen: isCartOpen, toggleDrawer: toggleCart } = useCartStore();
+
   const { isMobile } = useResponsive();
   const router = useRouter();
   const pathname = usePathname();
@@ -625,18 +630,18 @@ export default function Navbar() {
 
   const handleLinkClick = useCallback(() => {
     if (isMobile) {
-      closeDrawer();
+      closeMobileMenu();
     }
     setActiveDropdown(null);
-  }, [isMobile, closeDrawer]);
+  }, [isMobile, closeMobileMenu]);
 
   const handleLogoClick = useCallback(() => {
     setActiveDropdown(null);
     if (isMobile) {
-      closeDrawer();
+      closeMobileMenu();
     }
     router.push("/");
-  }, [isMobile, router, closeDrawer]);
+  }, [isMobile, router, closeMobileMenu]);
 
   const handleLogout = useCallback(async () => {
     if (isLoggingOut) return;
@@ -647,7 +652,7 @@ export default function Navbar() {
 
       if (result.success) {
         toast.success(result.message || "Logged out successfully");
-        closeDrawer();
+        closeMobileMenu();
         router.push("/");
       } else {
         toast.error(result.message || "Logout failed");
@@ -657,23 +662,23 @@ export default function Navbar() {
       toast.error("An error occurred during logout");
 
       clearUser();
-      closeDrawer();
+      closeMobileMenu();
       router.push("/");
     } finally {
       setIsLoggingOut(false);
     }
-  }, [isLoggingOut, logout, closeDrawer, router, clearUser]);
+  }, [isLoggingOut, logout, closeMobileMenu, router, clearUser]);
 
   const handleMobileMenuToggle = useCallback(() => {
     setActiveDropdown(null);
-    toggleDrawer();
-  }, [toggleDrawer]);
+    toggleMobileMenu();
+  }, [toggleMobileMenu]);
 
-  // Cart drawer toggle handler
+  // Cart drawer toggle handler - only for cart functionality
   const handleCartClick = useCallback(() => {
     setActiveDropdown(null);
-    toggleDrawer(); // This will open/close the cart drawer
-  }, [toggleDrawer]);
+    toggleCart(); // This will open/close the cart drawer
+  }, [toggleCart]);
 
   const fileInputProps = useMemo(
     () => ({
@@ -694,7 +699,7 @@ export default function Navbar() {
 
       <nav
         className={`${styles.navbarWrapper} ${
-          isDrawerOpen ? styles.mobileNavOpen : ""
+          isMobileMenuOpen ? styles.mobileNavOpen : ""
         }`}
         role="navigation"
         aria-label="Main navigation"
@@ -728,12 +733,12 @@ export default function Navbar() {
               className={styles.mobileMenuButton}
               onClick={handleMobileMenuToggle}
               aria-label={
-                isDrawerOpen ? "Close navigation menu" : "Open navigation menu"
+                isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"
               }
-              aria-expanded={isDrawerOpen}
+              aria-expanded={isMobileMenuOpen}
               type="button"
             >
-              {!isDrawerOpen ? (
+              {!isMobileMenuOpen ? (
                 <MenuIcon className={styles.menuIcon} aria-hidden="true" />
               ) : (
                 <CloseIcon className={styles.closeIcon} aria-hidden="true" />
@@ -752,7 +757,7 @@ export default function Navbar() {
           <CartSection onCartClick={handleCartClick} />
         </div>
 
-        {isMobile && isDrawerOpen && (
+        {isMobile && isMobileMenuOpen && (
           <div className={styles.mobileMenuOverlay}>
             <div className={styles.mobileMenuContent}>
               <NavigationLinks

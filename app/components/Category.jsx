@@ -49,11 +49,34 @@ const MOCK_CATEGORIES = [
   },
 ];
 
+const CategorySkeleton = () => (
+  <div className={styles.categoryImageContainer}>
+    <div className={`${styles.categoryWrapperImageLoading} skeleton`}></div>
+  </div>
+);
+
 export default function Category() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [hasOverflow, setHasOverflow] = useState(false);
   const [maxScroll, setMaxScroll] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
   const gridRef = useRef(null);
+
+  // Simulate loading categories
+  useEffect(() => {
+    const loadCategories = async () => {
+      setIsLoading(true);
+
+      // Simulate API call delay
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      setCategories(MOCK_CATEGORIES);
+      setIsLoading(false);
+    };
+
+    loadCategories();
+  }, []);
 
   useEffect(() => {
     const checkOverflow = () => {
@@ -71,10 +94,10 @@ export default function Category() {
     checkOverflow();
     window.addEventListener("resize", checkOverflow);
     return () => window.removeEventListener("resize", checkOverflow);
-  }, []);
+  }, [categories]);
 
   const handlePrevious = () => {
-    if (!hasOverflow) return;
+    if (!hasOverflow || isLoading) return;
 
     const scrollAmount = 300;
     const newPosition = Math.max(0, scrollPosition - scrollAmount);
@@ -89,7 +112,7 @@ export default function Category() {
   };
 
   const handleNext = () => {
-    if (!hasOverflow) return;
+    if (!hasOverflow || isLoading) return;
 
     const scrollAmount = 100;
     const newPosition = Math.min(maxScroll, scrollPosition + scrollAmount);
@@ -103,59 +126,64 @@ export default function Category() {
     }
   };
 
-  const canGoPrevious = hasOverflow && scrollPosition > 0;
-  const canGoNext = hasOverflow && scrollPosition < maxScroll;
+  const canGoPrevious = hasOverflow && scrollPosition > 0 && !isLoading;
+  const canGoNext = hasOverflow && scrollPosition < maxScroll && !isLoading;
 
   return (
     <section className={styles.Categorycontainer}>
       <div className={styles.CategoryHeader}>
-      <h1>Filter by Category</h1>
-      <div className={styles.CategoryController}>
-        <button
-          className={`${styles.navButton} ${
-            !canGoPrevious ? styles.disabled : ""
-          }`}
-          onClick={handlePrevious}
-          disabled={!canGoPrevious}
-          aria-label="Previous categories"
-        >
-          <LeftIcon className={styles.navBtnIcon} />
-        </button>
-        <button
-          className={`${styles.navButton} ${!canGoNext ? styles.disabled : ""}`}
-          onClick={handleNext}
-          disabled={!canGoNext}
-          aria-label="Next categories"
-        >
-          <RightIcon className={styles.navBtnIcon} />
-        </button>
+        <h1>Filter by Category</h1>
+        <div className={styles.CategoryController}>
+          <button
+            className={`${styles.navButton} ${
+              !canGoPrevious ? styles.disabled : ""
+            }`}
+            onClick={handlePrevious}
+            disabled={!canGoPrevious}
+            aria-label="Previous categories"
+          >
+            <LeftIcon className={styles.navBtnIcon} />
+          </button>
+          <button
+            className={`${styles.navButton} ${
+              !canGoNext ? styles.disabled : ""
+            }`}
+            onClick={handleNext}
+            disabled={!canGoNext}
+            aria-label="Next categories"
+          >
+            <RightIcon className={styles.navBtnIcon} />
+          </button>
+        </div>
       </div>
-      </div>
-
 
       <div
         ref={gridRef}
         className={styles.categoriesGrid}
         onScroll={() => {
-          if (gridRef.current) {
+          if (gridRef.current && !isLoading) {
             setScrollPosition(gridRef.current.scrollLeft);
           }
         }}
       >
-        {MOCK_CATEGORIES.map((category) => (
-          <div key={category.id} className={styles.categoryImageContainer}>
-            <div className={styles.categoryWrapperImage}>
-              <Image
-                src={category.image}
-                alt={category.name}
-                width={120}
-                height={120}
-                className={styles.categoryImage}
-              />
-            </div>
-            <h3 className={styles.categoryName}>{category.name}</h3>
-          </div>
-        ))}
+        {isLoading
+          ? Array.from({ length: 6 }).map((_, index) => (
+              <CategorySkeleton key={index} />
+            ))
+          : categories.map((category) => (
+              <div key={category.id} className={styles.categoryImageContainer}>
+                <div className={styles.categoryWrapperImage}>
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    width={120}
+                    height={120}
+                    className={styles.categoryImage}
+                  />
+                </div>
+                <h3 className={styles.categoryName}>{category.name}</h3>
+              </div>
+            ))}
       </div>
     </section>
   );

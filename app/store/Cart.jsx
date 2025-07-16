@@ -1,16 +1,11 @@
 import { create } from 'zustand';
 
 export const useCartStore = create((set, get) => ({
-  // Cart items state
   items: [],
   
-  // Cart UI state
   isLoading: false,
-  
-  // Drawer state (consolidated from useDrawerStore)
   isDrawerOpen: false,
   
-  // Cart Actions
   addItem: (product) => set((state) => {
     const existingItem = state.items.find(item => item.id === product.id);
     
@@ -45,12 +40,10 @@ export const useCartStore = create((set, get) => ({
   
   setLoading: (loading) => set({ isLoading: loading }),
   
-  // Drawer Actions
   toggleDrawer: () => set((state) => ({ isDrawerOpen: !state.isDrawerOpen })),
   openDrawer: () => set({ isDrawerOpen: true }),
   closeDrawer: () => set({ isDrawerOpen: false }),
   
-  // Computed values
   getItemCount: () => {
     const state = get();
     if (!state.items || !Array.isArray(state.items)) return 0;

@@ -61,7 +61,7 @@ export default function Footer() {
               </div>
               <div className={styles.email}>
                 <EmailIcon aria-label="Email Icon" className={styles.emailIcon} />
-                <p>support@example.com</p>
+                <p>kamukunjikonnect@gmail.com</p>
               </div>
             </div>
             <div className={styles.socialIcons}>

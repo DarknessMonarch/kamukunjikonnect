@@ -1,16 +1,26 @@
 "use client";
 
-import { toast } from "sonner";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCartStore } from "@/app/store/Cart"; // Import cart store
-import styles from "@/app/style/productCard.module.css";
-
+import { useCartStore } from "@/app/store/Cart";
+import { toast } from "sonner";
 import { IoCartOutline as CartIcon } from "react-icons/io5";
+import styles from "@/app/style/productCard.module.css";
 
 export default function ProductCard({ data }) {
   const router = useRouter();
-  const { addItem, openDrawer } = useCartStore(); // Get cart actions
+  const { addItem, openDrawer } = useCartStore();
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 800)
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleProductClick = () => {
     router.push(`/product/${data.id}`);
@@ -18,22 +28,27 @@ export default function ProductCard({ data }) {
 
   const handleAddtoCart = (e) => {
     e.stopPropagation();
-    
-    // Add item to cart using cart store
     addItem({
       id: data.id,
       name: data.name,
       currentPrice: data.currentPrice,
       originalPrice: data.originalPrice,
       image: data.image,
-      category: data.category || "general"
+      category: data.category || "general",
     });
-    
     toast.success(`${data.name} added to cart!`);
-    
-    // Optionally open the cart drawer to show the added item
     openDrawer();
   };
+
+  if (loading) {
+    return (
+      <div className={styles.productCardContainer}>
+        <div className={`${styles.productCardImageWrapper} skeleton`}></div>
+        <div className={`${styles.productCardNameLoading} skeleton`}></div>
+        <div className={`${styles.productCardPriceLoading} skeleton`}></div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.productCardContainer} onClick={handleProductClick}>

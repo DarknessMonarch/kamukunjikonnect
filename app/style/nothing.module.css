@@ -1,45 +1,32 @@
 @media screen {
-  .pageLayout {
+  .emptyState {
+    gap: 10px;
     width: 100%;
     height: 100%;
     display: flex;
-    overflow-y: auto;
-  }
-
-
-  .notFound {
-    gap: 40px;
-    width: 100%;
-    height: 100%;
-    display: flex;
+    min-height: auto;
     align-items: center;
     flex-direction: column;
     justify-content: center;
-
   }
 
-  .notFound p {
+  .emptyState p {
+    text-transform: capitalize;
     text-align: center;
-    font-size: 1rem;
-    padding: 10px;
   }
 
-  .notFoundImg {
-    height: 150px;
-    width: auto;
+  .emptyStateImage {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
   }
-
-
 }
 
 /* using it as global style for larger devices  */
 @media only screen and (min-width: 48em) {
-
-  .notFoundImg {
-    height: 300px;
-    width: auto;
+  .emptyState {
+    min-height: 200px;
   }
-
 }
 
 /* ipad pro screens & laptop */

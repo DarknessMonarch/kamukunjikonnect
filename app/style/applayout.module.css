@@ -9,6 +9,7 @@
     overflow-y: auto;
     align-items: center;
     flex-direction: column;
+    justify-content: space-between;
     color: var(--light-primary-color);
     background-color: var(--background-color);
   }

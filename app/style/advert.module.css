@@ -7,11 +7,17 @@
     position: relative;
     align-items: center;
     padding: 50px 20px;
-    padding-bottom: 0;
     border-radius: 15px;
     flex-direction: column;
     justify-content: space-between;
     background-color: var(--light-gray);
+  }
+
+  .advertSkeleton {
+    width: 100%;
+    min-height: 450px;
+    position: relative;
+    border-radius: 15px;
   }
 
   .advertTextSection {
@@ -45,11 +51,11 @@
     border-radius: 30px;
     transition: all 0.2s ease;
     color: var(--background-color);
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
   }
 
   .advertButton:hover {
-    background-color: var(--tertiary-color);
+    background-color: var(--secondary-color);
   }
 
   .advertImageSection {
@@ -92,37 +98,11 @@
   }
 
   .advertPaginationDot.active {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
   }
 
   .advertPaginationDot:hover {
     background-color: var(--secondary-color);
-  }
-
-  .advertLoadingState {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 500px;
-    background: var(--light-background-color);
-  }
-
-  .advertLoadingSpinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--border-color);
-    border-top: 3px solid var(--secondary-color);
-    border-radius: 50%;
-    animation: advertSpin 1s linear infinite;
-  }
-
-  @keyframes advertSpin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
   }
 }
 
@@ -167,3 +147,5 @@
 /* 5k screens and above */
 @media only screen and (min-width: 91em) {
 }
+
+

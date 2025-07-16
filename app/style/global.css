@@ -6,7 +6,7 @@
     --secondary-light-color: #f7e5d8;
     --tertiary-light-color: #f7ecd6;
     --accent-color: #f4f4f4;
-    --dark-color: #1a1a1a;
+    --dark-color: #020202;
     --light-color: #ffffff;
     --warm-gray: #8a8a8a;
     --light-gray: #f8f8f8;
@@ -14,7 +14,7 @@
     --success-color: #4caf50;
     --warning-color: #ff9800;
     --error-color: #f44336;
-    --lighter-color:#ffffff80;
+    --lighter-color: #ffffff80;
     --background-color: #ffffff;
     --light-background-color: #f8f8f8;
     --section-background: #fafafa;
@@ -57,8 +57,8 @@
     --font-size-3xl: 1.875rem; /* 30px */
     --font-size-4xl: 2.25rem; /* 36px */
 
-        --sidebar-mobile-width: 90vw;
-    --sidebar-desktop-width: 400px;
+    --sidebar-mobile-width: 100%;
+    --sidebar-desktop-width: 500px;
     --drawer-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     margin: 0;
@@ -206,7 +206,7 @@
     background: linear-gradient(
       90deg,
       var(--light-gray) 25%,
-      #e0e0e0 50%,
+      #f3f2f2 50%,
       var(--light-gray) 75%
     );
     background-size: 200% 100%;
@@ -225,7 +225,7 @@
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--secondary-light-color) var(--light-color);
+    scrollbar-color: var(--secondary-color) var(--light-color);
   }
 
   *::-webkit-scrollbar {

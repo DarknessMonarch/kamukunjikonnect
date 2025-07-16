@@ -1,7 +1,5 @@
 "use client";
 
-import EmptyCart from "@/public/assets/emptycart.png";
-import Nothing from "@/app/components/Nothing";
 import Spoons from "@/public/assets/spoons.png";
 import KitchenSet from "@/public/assets/kitchenset.png";
 import Plates from "@/public/assets/plates.png";
@@ -9,10 +7,12 @@ import Spoon from "@/public/assets/spoons.png";
 import Stainless from "@/public/assets/stainless.png";
 import styles from "@/app/style/product.module.css";
 import ProductCard from "@/app/components/productCard";
+import Nothing from "@/app/components/Nothing";
+import EmptyCart from "@/public/assets/emptycart.png";
 
-export default function Product() {
+export default function Category() {
   const Products = [
-    {
+ {
       id: 1,
       name: "Digital Smart Toaster - 4 Slice",
       currentPrice: "450",
@@ -62,36 +62,17 @@ export default function Product() {
       description:
         "Professional grade stainless steel mixing bowls with non-slip base",
     },
-    {
+       {
       id: 6,
-      name: "Bamboo Cutting Board Set - 3 Sizes",
-      currentPrice: "79",
-      originalPrice: "99",
-      image: KitchenSet,
-      category: "cutting-boards",
+      name: "Professional Stainless Steel Mixing Bowls - 5 Set",
+      currentPrice: "125",
+      originalPrice: "175",
+      image: Stainless,
+      category: "mixing-bowls",
       description:
-        "Eco-friendly bamboo cutting boards in three convenient sizes",
+        "Professional grade stainless steel mixing bowls with non-slip base",
     },
-    {
-      id: 7,
-      name: "Silicone Kitchen Utensil Set - 10 Pieces",
-      currentPrice: "55",
-      originalPrice: "75",
-      image: Spoons,
-      category: "utensils",
-      description:
-        "Heat-resistant silicone kitchen utensils, safe for non-stick cookware",
-    },
-    {
-      id: 8,
-      name: "Glass Food Storage Containers - 12 Pack",
-      currentPrice: "89",
-      originalPrice: "115",
-      image: Plates,
-      category: "storage",
-      description:
-        "Airtight glass food storage containers with leak-proof lids",
-    },
+ 
   ];
 
   if (Products.length === 0) {
@@ -99,25 +80,15 @@ export default function Product() {
       <section className={styles.emptyProductWrapper}>
         <Nothing
           NothingImage={EmptyCart}
-          Text="No products added yet"
-          Alt="No products added yet"
+          Text="Product of this category not found"
+          Alt="Category not found"
         />
       </section>
     );
   }
-
   return (
     <section className={styles.productWrapper}>
-      <div className={styles.productHeader}>
-        <h2>Best Sellers</h2>
-        <button
-          aria-label="View All Products"
-          disabled={!Products}
-          className={styles.viewAllButton}
-        >
-          View All
-        </button>
-      </div>
+
 
       <div className={styles.productGrid}>
         {Products.map((product) => (

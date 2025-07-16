@@ -9,6 +9,9 @@
     cursor: pointer;
   }
 
+  
+
+
   .productCardContainer:hover {
     transform: translateY(-4px);
   }
@@ -74,6 +77,16 @@
   .cartIcon {
     font-size: 24px;
     color: var(--primary-color);
+  }
+
+  .productCardNameLoading {
+    width: 90%;
+    height: 20px;
+  }
+
+  .productCardPriceLoading {
+    width: 50%;
+    height: 20px;
   }
 
   .productCardContainer:hover .cartIconContainer {

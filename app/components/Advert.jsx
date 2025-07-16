@@ -111,32 +111,15 @@ export default function Advert() {
   };
 
   const handleShopNow = (productId) => {
-    // Handle shop now action
     console.log(`Shopping for product: ${productId}`);
   };
 
   if (loading) {
-    return (
-      <div className={styles.advertContainer}>
-        <div className={styles.advertContent}>
-          <div className={styles.advertLoadingState}>
-            <div className={styles.advertLoadingSpinner}></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <div className={`${styles.advertSkeleton} skeleton`}></div>;
   }
 
   if (featuredProducts.length === 0) {
-    return (
-      <div className={styles.advertContainer}>
-        <div className={styles.advertContent}>
-          <div className={styles.advertLoadingState}>
-            <p>No featured products available</p>
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   const currentProduct = featuredProducts[currentSlide];
