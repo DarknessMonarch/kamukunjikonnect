@@ -1,0 +1,80 @@
+@media screen {
+  .productWrapper {
+    gap: 30px;
+    width: 100%;
+    display: flex;
+    padding: 20px 0;
+    flex-direction: column;
+  }
+
+  .productHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .productHeader h2 {
+    font-size: 1.5rem;
+  }
+
+  .viewAllButton {
+    width: 100px;
+    display: flex;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 30px;
+    align-items: center;
+    justify-content: center;
+    text-transform: capitalize;
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+  }
+
+  .viewAllButton:hover {
+    color: var(--background-color);
+    background-color: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
+  }
+
+  .productGrid {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 40px;
+  }
+
+  .productGrid > * {
+    flex: 1 1 100%;
+  }
+}
+
+/* Responsive breakpoints */
+@media only screen and (min-width: 48em) {
+  .productGrid {
+    gap: 18px;
+  }
+  
+  .productGrid > * {
+    flex: 1 1 calc(50% - 9px); 
+  }
+}
+
+@media only screen and (min-width: 64.063em) and (max-width: 90em) {
+  .productGrid {
+    gap: 20px;
+  }
+  
+  .productGrid > * {
+    flex: 1 1 calc(33.333% - 13.33px); 
+  }
+}
+
+@media only screen and (min-width: 91em) {
+  .productGrid {
+    gap: 24px;
+  }
+  
+  .productGrid > * {
+    flex: 1 1 calc(25% - 18px); 
+  }
+}
