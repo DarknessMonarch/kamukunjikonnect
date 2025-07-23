@@ -1,140 +1,146 @@
 @media screen {
-  .authComponent {
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 10px;
-    position: fixed;
-    overflow: hidden;
-    overflow-y: auto;
-    align-items: center;
-    flex-direction: column;
-    color: var(--light-primary-color);
-    background-color: var(--background-color);
-  }
-
-  .authComponentBgImage {
-    display: none;
-    position: relative;
-  }
-
   .authWrapper {
+    height: 100vh;
     display: flex;
-  }
-
-  .formContainer {
-    gap: 20px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .formHeader {
-    gap: 10px;
-    display: flex;
-    padding-top: 50px;
     align-items: center;
-    flex-direction: column;
     justify-content: center;
   }
 
+  .formContainer {
+    gap: var(--spacing-lg);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-xl);
+  }
+
+  .formHeader {
+    gap: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+  }
+
   .formHeader h1 {
-    font-size: 2rem;
-    font-weight: 800;
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-bold);
     color: var(--primary-color);
+    margin: 0;
   }
 
   .formHeader p {
-    font-size: 1rem;
-    font-weight: 400;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-regular);
+    color: var(--warm-gray);
+    margin: 0;
   }
 
   .authLogo {
     width: 80px;
     height: 80px;
-    padding: 10px;
-    width: fit-content;
-    border-radius: 360%;
+    padding: var(--spacing-sm);
+    border-radius: 50%;
     background-color: var(--light-background-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .authInput {
-    gap: 10px;
+    gap: var(--spacing-md);
     width: 100%;
     display: flex;
-    padding: 0 20px;
+    padding: 0 var(--spacing-lg);
     height: 60px;
     align-items: center;
-    border-radius: 15px;
+    border-radius: var(--radius-lg);
     background: var(--light-background-color);
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+  }
+
+  .authInput:focus-within {
+    border-color: var(--secondary-color);
+    box-shadow: var(--shadow-light);
   }
 
   .authInput input {
-    width: 100%;
+    flex: 1;
     border: none;
     outline: none;
-    height: 50px;
     background: transparent;
+    font-size: var(--font-size-base);
+    color: var(--primary-color);
   }
 
   .authInput input::placeholder {
-    font-size: .9rem;
+    font-size: var(--font-size-sm);
+    color: var(--warm-gray);
   }
   
   .authIcon {
     font-size: 20px;
-    color: var(--light-primary-color);
+    color: var(--warm-gray);
+    transition: color 0.2s ease;
+    flex-shrink: 0;
   }
 
-  .authInput:hover .authIcon {
+  .authInput:hover .authIcon,
+  .authInput:focus-within .authIcon {
     color: var(--secondary-color);
   }
 
   .authInput select {
-    width: 100%;
-    padding: 10px;
-    background-color: transparent;
+    flex: 1;
+    padding: var(--spacing-sm);
+    background: transparent;
     border: none;
+    color: var(--primary-color);
   }
 
   .showBtn {
     cursor: pointer;
-    background-color: transparent;
+    background: transparent;
+    border: none;
+    color: var(--warm-gray);
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .showBtn:hover {
+    color: var(--secondary-color);
   }
 
   .termsContainer {
-    gap: 10px;
+    gap: var(--spacing-sm);
     display: flex;
     align-items: center;
   }
 
   .termsContainer input[type="checkbox"] {
-    padding-left: 5px;
-    padding-right: 5px;
-    border-radius: 15px;
-    -webkit-appearance: button;
-    appearance: button;
-    border: double 2px var(--background-color);
-    background-color: transparent;
-    color: var(--background-color);
-    white-space: nowrap;
-    overflow: hidden;
-    outline: none;
     width: 20px;
     height: 20px;
+    border-radius: var(--radius-xs);
+    border: 2px solid var(--border-color);
+    background: transparent;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
   }
 
   .termsContainer input[type="checkbox"]:checked {
-    background-color: transparent;
-    border-left-color: var(--secondary-color);
-    border-right-color: var(--secondary-color);
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
   }
 
   .termsContainer label {
     cursor: pointer;
-    font-size: .9rem;
+    font-size: var(--font-size-sm);
+    color: var(--warm-gray);
     text-decoration: underline;
+    transition: color 0.2s ease;
   }
 
   .termsContainer label:hover {
@@ -142,38 +148,55 @@
   }
 
   .authBottomBtn {
-    gap: 10px;
+    gap: var(--spacing-md);
     display: flex;
     flex-direction: column;
   }
 
   .formAuthButton {
-    gap: 10px;
     width: 100%;
     height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
     cursor: pointer;
-    border-radius: 15px;
-    color: var(--background-color);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    color: var(--light-color);
     background-color: var(--primary-color);
+    transition: all 0.2s ease;
+  }
+
+  .formAuthButton:hover:not(:disabled) {
+    background-color: var(--secondary-color);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-medium);
   }
 
   .resendButton {
     width: 100%;
     height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
-    border-radius: 15px;
+    border: 1px solid var(--primary-color);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
     background: transparent;
     color: var(--primary-color);
-    border: 1px solid var(--primary-color);
+    transition: all 0.2s ease;
   }
 
-  .resendButton:hover {
+  .resendButton:hover:not(:disabled) {
     background-color: var(--primary-color);
-    color: var(--background-color);
-  }
-
-  .formAuthButton:hover {
-    background-color: var(--secondary-color);
+    color: var(--light-color);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-light);
   }
 
   .formChange {
@@ -188,104 +211,92 @@
     justify-content: flex-end;
   }
 
-  .formChange, .forgotpasswordspan span {
+  .formChange span,
+  .forgotpasswordspan span {
     cursor: pointer;
-    font-size: .9rem;
+    font-size: var(--font-size-sm);
+    color: var(--warm-gray);
     text-decoration: underline;
+    transition: color 0.2s ease;
   }
 
-  .formChange span:hover {
-    color: var(--secondary-color);
-  }
-
+  .formChange span:hover,
   .forgotpasswordspan span:hover {
     color: var(--secondary-color);
   }
 
   .authBottomBtn p span {
-    font-size: .8rem;
+    font-size: var(--font-size-xs);
     text-decoration: underline;
   }
 
   .formContainer h3 {
-    gap: 10px;
+    gap: var(--spacing-sm);
     display: flex;
-    font-size: 0.9rem;
-    font-weight: 300;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-light);
     text-align: center;
     align-items: center;
     justify-content: center;
+    color: var(--warm-gray);
   }
 
   .btnLoginContainer {
     color: var(--secondary-color);
     text-decoration: underline;
     cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  .btnLoginContainer:hover {
+    color: var(--primary-color);
   }
 }
 
-/* using it as global style for larger devices  */
+/* Tablet & Small Laptop Screens */
 @media only screen and (min-width: 48em) {
-  .authComponent {
-    gap: 30px;
-    display: flex;
-    padding: 40px;
-    overflow-y: hidden;
-    flex-direction: row;
-    align-items: center;
-    background-color: var(--background-color);
-  }
-
-  .authComponentBgImage {
-    flex: 0 0 50%; 
-    height: 100%;
-    display: flex;
-    padding: 20px;
-    border-radius: 60px;
-    align-items: center;
-    justify-content: center;
-    background: var(--background-color);
-    background: var(--linear-gradient-color);
-  }
-
   .authWrapper {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: var(--spacing-lg);
   }
 
   .formContainer {
     width: 100%;
     min-width: 400px;
     max-width: 500px;
-    padding: 40px;
+    padding: var(--spacing-xxxl);
+    background: var(--light-color);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-medium);
   }
 
   .advertImage {
     border-radius: inherit;
     object-position: center bottom;
+    object-fit: cover;
   }
 
   .authText {
-    padding: 20px;
-    font-size: 2rem;
-    font-weight: 200;
-    color: var(--background-color);
-    background: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: var(--spacing-lg);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-light);
+    color: var(--light-color);
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-light);
   }
 }
 
-/* ipad pro screens & laptop */
+/* iPad Pro & Laptop Screens */
 @media only screen and (min-width: 49em) and (max-width: 64em) {
   .authComponentBgImage {
-    flex: 0 0 50%; 
+    flex: 0 0 50%;
   }
   
   .formContainer {
@@ -294,10 +305,10 @@
   }
 }
 
-/* large screens : Desktop and 4k screens */
+/* Desktop & Large Screens */
 @media only screen and (min-width: 64.063em) and (max-width: 90em) {
   .authComponentBgImage {
-    flex: 0 0 50%; 
+    flex: 0 0 50%;
   }
   
   .formContainer {
@@ -306,10 +317,10 @@
   }
 }
 
-/* 5k screens and above */
+/* Ultra-Wide & 4K+ Screens */
 @media only screen and (min-width: 91em) {
   .authComponentBgImage {
-    flex: 0 0 50%; 
+    flex: 0 0 50%;
   }
   
   .formContainer {

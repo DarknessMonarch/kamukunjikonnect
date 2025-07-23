@@ -839,7 +839,7 @@ const RightSection = ({
         </button>
       </div>
     ) : (
-      <Link href="/login" className={styles.accountSection}>
+      <Link href="/authentication/login" className={styles.accountSection}>
         <PersonIcon className={styles.accountIcon} />
       </Link>
     )}

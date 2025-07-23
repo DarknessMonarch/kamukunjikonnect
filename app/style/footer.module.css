@@ -6,7 +6,7 @@
   }
 
   .newsletter {
-    background-color: var(--secondary-color);
+    background-color: var(--tertiary-light-color);
     max-width: var(--app-max-width);
     justify-content: space-between;
     flex-direction: column;
@@ -27,12 +27,11 @@
 
   .newsletterText h3 {
     font-size: 1.4rem;
-    color: var(--background-color);
   }
 
   .newsletterText p {
     font-size: 1rem;
-    color: var(--background-color);
+    color: var(--primary-color);
     font-weight: var(--font-weight-light);
   }
 
@@ -65,8 +64,8 @@
     border-radius: 15px;
     transition: all 0.3s ease;
     color: var(--background-color);
-    background: var(--dark-color);
-    border: 1px solid var(--dark-color);
+    background: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
   }
 
   .subscribeBtn:hover {

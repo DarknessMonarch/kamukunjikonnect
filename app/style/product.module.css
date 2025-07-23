@@ -3,8 +3,10 @@
     gap: 30px;
     width: 100%;
     display: flex;
+    margin: 0 auto;
     padding: 20px 0;
     flex-direction: column;
+    max-width: var(--app-max-width);
   }
 
   .emptyProductWrapper {
