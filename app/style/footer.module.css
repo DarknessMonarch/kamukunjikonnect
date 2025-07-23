@@ -1,21 +1,21 @@
 @media screen {
   .footer {
     width: 100%;
-    padding: 10px;
     margin-top: 20px;
     background-color: var(--background-color);
   }
 
   .newsletter {
     background-color: var(--secondary-color);
+    max-width: var(--app-max-width);
     justify-content: space-between;
     flex-direction: column;
     border-radius: 15px;
     align-items: center;
-    padding: 10;
+    margin: 0 auto;
     display: flex;
     padding: 20px;
-    width: 100%;
+    width: 95%;
     gap: 20px;
   }
 
@@ -65,13 +65,11 @@
     border-radius: 15px;
     transition: all 0.3s ease;
     color: var(--background-color);
-    background: var(--primary-color);
-    border: 1px solid var(--primary-color);
+    background: var(--dark-color);
+    border: 1px solid var(--dark-color);
   }
 
   .subscribeBtn:hover {
-    transform: translateY(-2px);
-    background-color: var(--tertiary-color);
     border: 1px solid var(--background-color);
   }
 
@@ -83,12 +81,12 @@
 
   .footerGrid {
     gap: 40px;
+    width: 100%;
     display: flex;
+    margin: 0 auto;
     flex-direction: column;
     justify-content: space-between;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: var(--app-max-width);
   }
 
   .footerSection {
@@ -230,12 +228,12 @@
 
   .footerBottomContent {
     gap: 20px;
+    width: 100%;
     display: flex;
+    margin: 0 auto;
     align-items: center;
     flex-direction: column;
-    width: 100%;
-    margin: 0 auto;
-    max-width: 1200px;
+    max-width: var(--app-max-width);
 
   }
 
@@ -319,12 +317,8 @@
 
 /* iPad Pro screens & laptop - Updated to match home CSS */
 @media only screen and (min-width: 49em) and (max-width: 64em) {
-  .newsletter {
-    max-width: 1200px;
-  }
 
   .footerGrid {
-    max-width: 1200px;
     justify-content: space-between;
   }
 
@@ -333,20 +327,16 @@
     min-width: 200px;
   }
 
-  .footerBottomContent {
-    max-width: 1200px;
-  }
+
 }
 
 /* Large screens: Desktop - Updated to match home CSS */
 @media only screen and (min-width: 64.063em) and (max-width: 90em) {
   .newsletter {
-    max-width: 1400px;
     transition: all 0.3s ease;
   }
 
   .footerGrid {
-    max-width: 1400px;
     justify-content: space-between;
     transition: all 0.3s ease;
   }
@@ -361,7 +351,6 @@
   }
 
   .footerBottomContent {
-    max-width: 1400px;
     transition: all 0.3s ease;
   }
 }
@@ -369,18 +358,15 @@
 /* 5k screens and above - Updated to match home CSS */
 @media only screen and (min-width: 91em) {
   .newsletter {
-    max-width: 1600px;
     transition: all 0.3s ease;
   }
 
   .footerGrid {
-    max-width: 1600px;
     justify-content: space-between;
     transition: all 0.3s ease;
   }
 
   .footerBottomContent {
-    max-width: 1600px;
     transition: all 0.3s ease;
   }
 

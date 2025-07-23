@@ -1,6 +1,7 @@
 @media screen {
   .homeContainer {
     display: flex;
+    max-width: var(--app-max-width);
     align-items: center;
     flex-direction: column;
     justify-content: center;
@@ -8,6 +9,7 @@
     padding: 10px;
     width: 100%;
     gap: 20px;
+
   }
 
   .mainContent {
@@ -347,13 +349,10 @@
 }
 /* iPad Pro screens & laptop */
 @media only screen and (min-width: 49em) and (max-width: 64em) {
-  .homeContainer {
-    max-width: 1200px;
-  }
+  
 }
 @media only screen and (min-width: 64.063em) and (max-width: 90em) {
   .homeContainer {
-    max-width: 1400px;
     transition: all 0.3s ease;
   }
 
@@ -383,7 +382,6 @@
 
 @media only screen and (min-width: 91em) {
   .homeContainer {
-    max-width: 1600px;
     transition: all 0.3s ease;
   }
 

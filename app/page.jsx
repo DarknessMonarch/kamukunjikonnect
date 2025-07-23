@@ -128,7 +128,6 @@ export default function Home() {
   };
 
   const handleShopNow = (productId) => {
-    console.log(`Shopping for product ${productId}`);
     alert(`Added product ${productId} to cart!`);
   };
 
@@ -234,7 +233,6 @@ export default function Home() {
         )}
       </div>
 
-      {/* Static content that renders immediately */}
       <div className={styles.features}>
         {Features.map((feature) => {
           const IconComponent = feature.icon;

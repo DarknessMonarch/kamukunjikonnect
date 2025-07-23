@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/app/store/Cart";
-import { toast } from "sonner";
 import { IoCartOutline as CartIcon } from "react-icons/io5";
 import styles from "@/app/style/productCard.module.css";
 
@@ -23,7 +23,7 @@ export default function ProductCard({ data }) {
   }, []);
 
   const handleProductClick = () => {
-    router.push(`/product/${data.id}`);
+    router.push(`/products/${data.name}`);
   };
 
   const handleAddtoCart = (e) => {

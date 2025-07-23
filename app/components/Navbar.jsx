@@ -9,7 +9,7 @@ import { useCartStore } from "@/app/store/Cart";
 import Dropdown from "@/app/components/Dropdown";
 import styles from "@/app/style/navbar.module.css";
 import { useDrawerStore } from "@/app/store/Drawer";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 
 import {
@@ -19,6 +19,8 @@ import {
   IoChevronDownOutline as ChevronDownIcon,
   IoSearchOutline as SearchIcon,
   IoCallOutline as PhoneIcon,
+  IoAdd as IoPlusIcon,
+  IoRemove as IoMinusIcon,
 } from "react-icons/io5";
 
 import { CgMenuGridO as MenuIcon } from "react-icons/cg";
@@ -41,44 +43,162 @@ const ALLOWED_IMAGE_TYPES = [
 const MOCK_CATEGORIES = [
   {
     id: 1,
-    name: "Appliances",
-    href: "/categories/kitchen-appliances",
+    name: "Kitchen Appliances",
+    slug: "kitchen-appliances",
+    href: "/categories?category=kitchen-appliances",
     image:
       "https://cdn.pixabay.com/photo/2018/02/22/15/41/wood-3173282_640.jpg",
+    dropdown: [
+      {
+        name: "Blenders & Mixers",
+        href: "/categories?category=kitchen-appliances&subcategory=blenders",
+      },
+      {
+        name: "Coffee Makers",
+        href: "/categories?category=kitchen-appliances&subcategory=coffee-makers",
+      },
+      {
+        name: "Food Processors",
+        href: "/categories?category=kitchen-appliances&subcategory=food-processors",
+      },
+      {
+        name: "Microwaves",
+        href: "/categories?category=kitchen-appliances&subcategory=microwaves",
+      },
+    ],
+    title: "Kitchen Appliances",
+    description:
+      "Essential kitchen appliances to make cooking easier and more efficient. From coffee makers to food processors, find everything you need for a modern kitchen.",
+    imageTitle: "Premium Kitchen Appliances",
+    imageDescription:
+      "Discover high-quality appliances that combine functionality with style for your dream kitchen.",
   },
   {
     id: 2,
-    name: "Cookware",
-    href: "/categories/cookware",
+    name: "Cookware & Bakeware",
+    slug: "cookware",
+    href: "/categories?category=cookware",
     image: "https://cdn.pixabay.com/photo/2017/07/04/07/31/pan-2470217_640.jpg",
+    dropdown: [
+      {
+        name: "Non-Stick Pans",
+        href: "/categories?category=cookware&subcategory=non-stick-pans",
+      },
+      {
+        name: "Stainless Steel Pots",
+        href: "/categories?category=cookware&subcategory=steel-pots",
+      },
+      {
+        name: "Baking Sheets",
+        href: "/categories?category=cookware&subcategory=baking-sheets",
+      },
+      {
+        name: "Cast Iron Cookware",
+        href: "/categories?category=cookware&subcategory=cast-iron",
+      },
+    ],
+    title: "Cookware & Bakeware",
+    description:
+      "Professional-grade cookware and bakeware for every cooking enthusiast. From non-stick pans to cast iron skillets, cook like a pro.",
+    imageTitle: "Professional Cookware Collection",
+    imageDescription:
+      "Elevate your culinary skills with our premium cookware designed for durability and performance.",
   },
   {
     id: 3,
-    name: "Dinnerware",
-    href: "/categories/dinnerware",
+    name: "Dinnerware & Tableware",
+    slug: "dinnerware",
+    href: "/categories?category=dinnerware",
     image:
       "https://cdn.pixabay.com/photo/2020/02/07/07/18/kitchen-4826379_640.jpg",
+    dropdown: [
+      {
+        name: "Dinner Sets",
+        href: "/categories?category=dinnerware&subcategory=dinner-sets",
+      },
+      {
+        name: "Glassware",
+        href: "/categories?category=dinnerware&subcategory=glassware",
+      },
+      {
+        name: "Cutlery Sets",
+        href: "/categories?category=dinnerware&subcategory=cutlery",
+      },
+      {
+        name: "Serving Dishes",
+        href: "/categories?category=dinnerware&subcategory=serving-dishes",
+      },
+    ],
+    title: "Dinnerware & Tableware",
+    description:
+      "Beautiful dinnerware and tableware sets to make every meal special. From elegant dinner sets to premium cutlery.",
+    imageTitle: "Elegant Dining Collection",
+    imageDescription:
+      "Transform your dining experience with our sophisticated tableware and dinnerware collections.",
   },
   {
     id: 4,
-    name: "Storage",
-    href: "/categories/storage",
+    name: "Storage & Organization",
+    slug: "storage",
+    href: "/categories?category=storage",
     image:
       "https://cdn.pixabay.com/photo/2020/02/07/07/18/kitchen-4826379_640.jpg",
+    dropdown: [
+      {
+        name: "Food Containers",
+        href: "/categories?category=storage&subcategory=food-containers",
+      },
+      {
+        name: "Spice Racks",
+        href: "/categories?category=storage&subcategory=spice-racks",
+      },
+      {
+        name: "Pantry Organizers",
+        href: "/categories?category=storage&subcategory=pantry-organizers",
+      },
+      {
+        name: "Refrigerator Storage",
+        href: "/categories?category=storage&subcategory=fridge-storage",
+      },
+    ],
+    title: "Storage & Organization",
+    description:
+      "Keep your kitchen organized and efficient with our storage solutions. From food containers to pantry organizers.",
+    imageTitle: "Smart Kitchen Storage",
+    imageDescription:
+      "Maximize your kitchen space with our innovative storage and organization solutions.",
   },
   {
     id: 5,
-    name: "Utensils",
-    href: "/categories/utensils",
+    name: "Kitchen Tools & Gadgets",
+    slug: "tools",
+    href: "/categories?category=tools",
     image:
       "https://cdn.pixabay.com/photo/2020/02/07/07/18/kitchen-4826379_640.jpg",
-  },
-  {
-    id: 6,
-    name: "Bakeware",
-    href: "/categories/bakeware",
-    image:
-      "https://cdn.pixabay.com/photo/2020/02/07/07/18/kitchen-4826379_640.jpg",
+    dropdown: [
+      {
+        name: "Chef Knives",
+        href: "/categories?category=tools&subcategory=chef-knives",
+      },
+      {
+        name: "Cutting Boards",
+        href: "/categories?category=tools&subcategory=cutting-boards",
+      },
+      {
+        name: "Kitchen Scales",
+        href: "/categories?category=tools&subcategory=kitchen-scales",
+      },
+      {
+        name: "Can Openers",
+        href: "/categories?category=tools&subcategory=can-openers",
+      },
+    ],
+    title: "Kitchen Tools & Gadgets",
+    description:
+      "Essential kitchen tools and innovative gadgets to streamline your cooking process. Quality tools for every kitchen task.",
+    imageTitle: "Professional Kitchen Tools",
+    imageDescription:
+      "Equip your kitchen with professional-grade tools designed for precision and durability.",
   },
 ];
 
@@ -87,7 +207,7 @@ const CATEGORY_OPTIONS = [
   ...MOCK_CATEGORIES.map((cat) => ({
     id: cat.id,
     name: cat.name,
-    value: cat.name.toLowerCase().replace(/\s+/g, "-"),
+    value: cat.slug,
   })),
 ];
 
@@ -95,38 +215,169 @@ const MOCK_PRODUCTS = [
   {
     id: 1,
     name: "Professional Chef Knife",
-    href: "/products/chef-knife",
+    slug: "chef-knife",
+    href: "/products?product=chef-knife",
     image:
       "https://cdn.pixabay.com/photo/2020/02/07/07/18/kitchen-4826379_640.jpg",
+    dropdown: [
+      {
+        name: "8-inch Chef Knife",
+        href: "/products?product=chef-knife&variant=8-inch",
+      },
+      {
+        name: "10-inch Chef Knife",
+        href: "/products?product=chef-knife&variant=10-inch",
+      },
+      {
+        name: "Santoku Knife",
+        href: "/products?product=chef-knife&variant=santoku",
+      },
+      {
+        name: "Paring Knife",
+        href: "/products?product=chef-knife&variant=paring",
+      },
+    ],
+    title: "Professional Chef Knives",
+    description:
+      "Premium chef knives crafted from high-carbon steel for superior sharpness and durability. Essential tools for professional and home chefs.",
+    imageTitle: "Master Chef Collection",
+    imageDescription:
+      "Experience precision cutting with our professional-grade chef knives designed for culinary excellence.",
   },
   {
     id: 2,
-    name: "Non-Stick Pan Set",
-    href: "/products/pan-set",
+    name: "Non-Stick Cookware Sets",
+    slug: "cookware-sets",
+    href: "/products?product=cookware-sets",
     image:
       "https://cdn.pixabay.com/photo/2020/02/07/07/18/kitchen-4826379_640.jpg",
+    dropdown: [
+      {
+        name: "5-Piece Cookware Set",
+        href: "/products?product=cookware-sets&variant=5-piece",
+      },
+      {
+        name: "10-Piece Cookware Set",
+        href: "/products?product=cookware-sets&variant=10-piece",
+      },
+      {
+        name: "Ceramic Non-Stick Set",
+        href: "/products?product=cookware-sets&variant=ceramic",
+      },
+      {
+        name: "Hard-Anodized Set",
+        href: "/products?product=cookware-sets&variant=hard-anodized",
+      },
+    ],
+    title: "Non-Stick Cookware Sets",
+    description:
+      "Complete cookware sets featuring advanced non-stick coating for healthy cooking and easy cleanup. Perfect for every cooking style.",
+    imageTitle: "Premium Cookware Collections",
+    imageDescription:
+      "Cook with confidence using our durable non-stick cookware designed for everyday cooking excellence.",
   },
   {
     id: 3,
-    name: "Stainless Steel Pot",
-    href: "/products/steel-pot",
+    name: "Coffee & Espresso Makers",
+    slug: "coffee-makers",
+    href: "/products?product=coffee-makers",
     image:
       "https://cdn.pixabay.com/photo/2020/02/07/07/18/kitchen-4826379_640.jpg",
+    dropdown: [
+      {
+        name: "Drip Coffee Makers",
+        href: "/products?product=coffee-makers&variant=drip",
+      },
+      {
+        name: "Espresso Machines",
+        href: "/products?product=coffee-makers&variant=espresso",
+      },
+      {
+        name: "French Press",
+        href: "/products?product=coffee-makers&variant=french-press",
+      },
+      {
+        name: "Pour Over Sets",
+        href: "/products?product=coffee-makers&variant=pour-over",
+      },
+    ],
+    title: "Coffee & Espresso Makers",
+    description:
+      "Brew the perfect cup every time with our selection of coffee and espresso makers. From simple drip coffee to professional espresso.",
+    imageTitle: "Barista Quality Coffee",
+    imageDescription:
+      "Enjoy café-quality coffee at home with our professional-grade coffee and espresso equipment.",
   },
   {
     id: 4,
-    name: "Kitchen Scale",
-    href: "/products/kitchen-scale",
+    name: "Kitchen Storage Solutions",
+    slug: "storage-solutions",
+    href: "/products?product=storage-solutions",
     image:
       "https://cdn.pixabay.com/photo/2020/02/07/07/18/kitchen-4826379_640.jpg",
+    dropdown: [
+      {
+        name: "Glass Storage Containers",
+        href: "/products?product=storage-solutions&variant=glass-containers",
+      },
+      {
+        name: "Plastic Food Containers",
+        href: "/products?product=storage-solutions&variant=plastic-containers",
+      },
+      {
+        name: "Vacuum Seal Bags",
+        href: "/products?product=storage-solutions&variant=vacuum-bags",
+      },
+      {
+        name: "Pantry Organization",
+        href: "/products?product=storage-solutions&variant=pantry",
+      },
+    ],
+    title: "Kitchen Storage Solutions",
+    description:
+      "Keep your kitchen organized and food fresh with our comprehensive storage solutions. From containers to pantry organizers.",
+    imageTitle: "Organized Kitchen Living",
+    imageDescription:
+      "Maximize your kitchen efficiency with our smart storage solutions designed for modern living.",
   },
 ];
 
 const NAV_LINKS = [
   { href: "/", label: "Home", exact: true },
   { href: "/about", label: "About Us", matchPattern: "/about" },
-  { href: "/categories", label: "Categories", hasDropdown: true },
-  { href: "/products", label: "Products", hasDropdown: true },
+  {
+    href: "/categories",
+    label: "Categories",
+    hasDropdown: true,
+    dropdown: MOCK_CATEGORIES.map((cat) => ({
+      name: cat.name,
+      href: cat.href,
+    })),
+    title: "Shop by Category",
+    description:
+      "Explore our comprehensive range of kitchen essentials organized by category. Find exactly what you need for your culinary adventures.",
+    image:
+      "https://cdn.pixabay.com/photo/2018/02/22/15/41/wood-3173282_640.jpg",
+    imageTitle: "Complete Kitchen Solutions",
+    imageDescription:
+      "From appliances to utensils, discover everything you need to create your perfect kitchen.",
+  },
+  {
+    href: "/products",
+    label: "Products",
+    hasDropdown: true,
+    dropdown: MOCK_PRODUCTS.map((product) => ({
+      name: product.name,
+      href: product.href,
+    })),
+    title: "Featured Products",
+    description:
+      "Discover our most popular and highest-rated kitchen products. Quality items that professional chefs and home cooks love.",
+    image: "https://cdn.pixabay.com/photo/2017/07/04/07/31/pan-2470217_640.jpg",
+    imageTitle: "Best-Selling Kitchen Items",
+    imageDescription:
+      "Shop our top-rated products trusted by thousands of satisfied customers worldwide.",
+  },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact Us" },
 ];
@@ -233,9 +484,32 @@ const useImageUpload = (updateProfileImage) => {
   };
 };
 
-const isLinkActive = (pathname, link) => {
+const isLinkActive = (pathname, searchParams, link) => {
   if (link.exact) {
     return pathname === link.href;
+  }
+
+  if (link.href === "/categories") {
+    if (pathname === "/categories") return true;
+
+    if (pathname.startsWith("/products/")) {
+      const categoryParam = searchParams?.get?.("category");
+      if (categoryParam) {
+        return MOCK_CATEGORIES.some((cat) => cat.slug === categoryParam);
+      }
+    }
+
+    return false;
+  }
+
+  if (link.href === "/products") {
+    if (pathname === "/products") return true;
+
+    if (pathname.startsWith("/products/")) {
+      return true;
+    }
+
+    return false;
   }
 
   const patternToCheck = link.matchPattern || link.href;
@@ -244,82 +518,61 @@ const isLinkActive = (pathname, link) => {
   );
 };
 
-const CategoryDropdown = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
+const NavItemDropdown = ({
+  item,
+  setActiveDropdown,
+  isMobile,
+  onNavItemClick,
+}) => {
+  const handleDropdownItemClick = () => {
+    setActiveDropdown(null);
+    if (isMobile) {
+      onNavItemClick();
+    }
+  };
 
   return (
     <div className={styles.dropdown}>
       <div className={styles.dropdownContent}>
-        <div className={styles.dropdownGrid}>
-          {MOCK_CATEGORIES.map((category) => (
-            <Link
-              key={category.id}
-              href={category.href}
-              className={styles.dropdownItem}
-              onClick={onClose}
-            >
-              <div className={styles.dropdownItemImage}>
-                <Image
-                  src={category.image}
-                  alt={category.name}
-                  fill
-                  sizes="100%"
-                  quality={100}
-                  objectFit="cover"
-                  priority={true}
-                  className={styles.dropdownImage}
-                />
-              </div>
-              <span className={styles.dropdownItemName}>{category.name}</span>
-            </Link>
-          ))}
+        <div className={styles.dropdownInfo}>
+          {item.title && <h2>{item.title}</h2>}
+          {item.description && <p>{item.description}</p>}
+          <div className={styles.dropdownLinks}>
+            {item.dropdown?.map((dropdownItem, dropIndex) => (
+              <Link
+                key={dropIndex}
+                href={dropdownItem.href}
+                className={styles.dropdownItem}
+                onClick={handleDropdownItemClick}
+              >
+                {dropdownItem.name}
+              </Link>
+            ))}
+            {isMobile && (
+              <Link
+                href={item.href}
+                className={styles.dropdownItem}
+                onClick={handleDropdownItemClick}
+              >
+                See more info
+              </Link>
+            )}
+          </div>
         </div>
-      </div>
-    </div>
-  );
-};
 
-const ProductDropdown = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className={styles.dropdown}>
-      <div className={styles.dropdownContent}>
-        <div className={styles.dropdownGrid}>
-          {MOCK_PRODUCTS.map((product) => (
-            <Link
-              key={product.id}
-              href={product.href}
-              className={styles.dropdownItem}
-              onClick={onClose}
-            >
-              <div className={styles.dropdownItemImage}>
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  sizes="100%"
-                  quality={100}
-                  objectFit="cover"
-                  priority={true}
-                  className={styles.dropdownImage}
-                />
-              </div>
-              <div className={styles.dropdownItemDetails}>
-                <span>{product.name}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-        <div className={styles.dropdownFooter}>
-          <Link
-            href="/products"
-            className={styles.seeMoreLink}
-            onClick={onClose}
-          >
-            View More →
-          </Link>
-        </div>
+        {item.image && (
+          <div className={styles.dropdownImageContainer}>
+            <Image
+              className={styles.dropdownImage}
+              src={item.image}
+              alt={item.imageTitle || "Dropdown Image"}
+              width={250}
+              height={250}
+            />
+            {item.imageTitle && <h3>{item.imageTitle}</h3>}
+            {item.imageDescription && <p>{item.imageDescription}</p>}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -354,10 +607,13 @@ const ProfileImageComponent = ({ profileImage, onImageClick, isUploading }) => (
 
 const NavigationLinks = ({
   pathname,
+  searchParams,
   onLinkClick,
   activeDropdown,
   setActiveDropdown,
+  isMobile,
 }) => {
+  const router = useRouter();
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -376,74 +632,94 @@ const NavigationLinks = ({
     };
   }, [activeDropdown, setActiveDropdown]);
 
-  const handleDropdownToggle = (linkLabel, hasDropdown) => {
-    if (hasDropdown) {
-      setActiveDropdown(activeDropdown === linkLabel ? null : linkLabel);
+  const handleInteraction = (link, index) => {
+    if (link.hasDropdown) {
+      if (isMobile) {
+        setActiveDropdown(activeDropdown === index ? null : index);
+      } else {
+        router.push(link.href);
+      }
     } else {
-      setActiveDropdown(null);
-      onLinkClick();
+      if (isMobile) {
+        onLinkClick();
+      }
     }
   };
 
-  const handleDropdownClose = () => {
-    setActiveDropdown(null);
-    onLinkClick();
+  const handleMouseEnter = (index, hasDropdown) => {
+    if (!isMobile && hasDropdown) {
+      setActiveDropdown(index);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) {
+      setActiveDropdown(null);
+    }
   };
 
   return (
     <div className={styles.navigationLinks} ref={dropdownRef}>
-      {NAV_LINKS.map((link) => (
-        <div key={link.href} className={styles.navLinkWrapper}>
-          {link.hasDropdown ? (
+      {NAV_LINKS.map((link, index) => {
+        const isActive = activeDropdown === index;
+        const isCurrentPage = isLinkActive(pathname, searchParams, link);
+
+        return (
+          <div
+            key={link.href}
+            className={styles.navLinkWrapper}
+            onMouseEnter={() => handleMouseEnter(index, link.hasDropdown)}
+            onMouseLeave={handleMouseLeave}
+          >
             <div
-              className={`${styles.navLink} ${styles.dropdownTrigger} ${
-                isLinkActive(pathname, link) ? styles.activeNavLink : ""
-              }`}
-              onClick={() => handleDropdownToggle(link.label, link.hasDropdown)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleDropdownToggle(link.label, link.hasDropdown);
-                }
-              }}
+              className={styles.navItemLinkContainer}
+              onClick={() => handleInteraction(link, index)}
             >
-              <span>{link.label}</span>
-              <ChevronDownIcon
-                className={`${styles.chevronIcon} ${
-                  activeDropdown === link.label ? styles.chevronUp : ""
+              <Link
+                href={link.href}
+                className={`${styles.navLink} ${
+                  isCurrentPage ? styles.activeNavLink : ""
                 }`}
-              />
+                onClick={(e) => {
+                  if (isMobile && link.hasDropdown) {
+                    e.preventDefault();
+                  } else if (!link.hasDropdown) {
+                    onLinkClick();
+                  }
+                }}
+              >
+                {link.label}
+                {link.hasDropdown && (
+                  <>
+                    {isMobile ? (
+                      isActive ? (
+                        <IoMinusIcon className={styles.mobileIcon} />
+                      ) : (
+                        <IoPlusIcon className={styles.mobileIcon} />
+                      )
+                    ) : (
+                      <ChevronDownIcon
+                        className={`${styles.chevron} ${
+                          isActive ? styles.chevronOpen : ""
+                        }`}
+                      />
+                    )}
+                  </>
+                )}
+              </Link>
             </div>
-          ) : (
-            <Link
-              href={link.href}
-              className={`${styles.navLink} ${
-                isLinkActive(pathname, link) ? styles.activeNavLink : ""
-              }`}
-              onClick={() => handleDropdownToggle(link.label, link.hasDropdown)}
-              aria-current={isLinkActive(pathname, link) ? "page" : undefined}
-            >
-              <span>{link.label}</span>
-            </Link>
-          )}
 
-          {link.label === "Categories" && (
-            <CategoryDropdown
-              isOpen={activeDropdown === "Categories"}
-              onClose={handleDropdownClose}
-            />
-          )}
-
-          {link.label === "Products" && (
-            <ProductDropdown
-              isOpen={activeDropdown === "Products"}
-              onClose={handleDropdownClose}
-            />
-          )}
-        </div>
-      ))}
+            {link.hasDropdown && isActive && (
+              <NavItemDropdown
+                item={link}
+                setActiveDropdown={setActiveDropdown}
+                isMobile={isMobile}
+                onNavItemClick={onLinkClick}
+              />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -498,7 +774,7 @@ const SearchSection = ({ isMobile }) => {
         <Dropdown
           options={CATEGORY_OPTIONS}
           onSelect={handleCategorySelect}
-          dropPlaceHolder="All Categories"
+          dropPlaceHolder="Select Category"
           value={selectedCategory}
         />
       </div>
@@ -599,15 +875,17 @@ const CartSection = ({ onCartClick }) => {
 };
 
 export default function Navbar() {
-  // Using drawer store for mobile menu functionality
-  const { isOpen: isMobileMenuOpen, toggleOpen: toggleMobileMenu, setClose: closeMobileMenu } = useDrawerStore();
-  
-  // Using cart store only for cart functionality
+  const {
+    isOpen: isMobileMenuOpen,
+    toggleOpen: toggleMobileMenu,
+    setClose: closeMobileMenu,
+  } = useDrawerStore();
   const { isDrawerOpen: isCartOpen, toggleDrawer: toggleCart } = useCartStore();
 
   const { isMobile } = useResponsive();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const {
@@ -674,10 +952,9 @@ export default function Navbar() {
     toggleMobileMenu();
   }, [toggleMobileMenu]);
 
-  // Cart drawer toggle handler - only for cart functionality
   const handleCartClick = useCallback(() => {
     setActiveDropdown(null);
-    toggleCart(); // This will open/close the cart drawer
+    toggleCart();
   }, [toggleCart]);
 
   const fileInputProps = useMemo(
@@ -707,7 +984,7 @@ export default function Navbar() {
         <div className={styles.navbarOffer}>
           <OfferIcon className={styles.offerIcon} aria-hidden="true" />
           <span className={styles.offerText}>
-            Your best kitcheware deals are here
+            Your best kitchenware deals are here
           </span>
         </div>
         <div className={styles.navbarContainerWrapper}>
@@ -733,7 +1010,9 @@ export default function Navbar() {
               className={styles.mobileMenuButton}
               onClick={handleMobileMenuToggle}
               aria-label={
-                isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"
+                isMobileMenuOpen
+                  ? "Close navigation menu"
+                  : "Open navigation menu"
               }
               aria-expanded={isMobileMenuOpen}
               type="button"
@@ -748,9 +1027,11 @@ export default function Navbar() {
           {!isMobile && (
             <NavigationLinks
               pathname={pathname}
+              searchParams={searchParams || new URLSearchParams()}
               onLinkClick={handleLinkClick}
               activeDropdown={activeDropdown}
               setActiveDropdown={setActiveDropdown}
+              isMobile={isMobile}
             />
           )}
 
@@ -762,9 +1043,11 @@ export default function Navbar() {
             <div className={styles.mobileMenuContent}>
               <NavigationLinks
                 pathname={pathname}
+                searchParams={searchParams || new URLSearchParams()}
                 onLinkClick={handleLinkClick}
                 activeDropdown={activeDropdown}
                 setActiveDropdown={setActiveDropdown}
+                isMobile={isMobile}
               />
             </div>
           </div>

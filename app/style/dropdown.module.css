@@ -65,7 +65,7 @@
 
   .optionsList span:hover {
    color: var(--background-color);
-    background-color: var(--tertiary-color);
+    background-color: var(--secondary-color);
   }
 
 

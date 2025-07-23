@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import Spoons from "@/public/assets/spoons.png";
 import KitchenSet from "@/public/assets/kitchenset.png";
 import Plates from "@/public/assets/plates.png";
@@ -11,14 +12,17 @@ import Nothing from "@/app/components/Nothing";
 import EmptyCart from "@/public/assets/emptycart.png";
 
 export default function Category() {
-  const Products = [
- {
+  const searchParams = useSearchParams();
+  const category = searchParams.get('category');
+
+  const AllProducts = [
+    {
       id: 1,
       name: "Digital Smart Toaster - 4 Slice",
       currentPrice: "450",
       originalPrice: "500",
       image: Spoons,
-      category: "appliances",
+      category: "kitchen-appliances",
       description:
         "Premium digital smart toaster with 4-slice capacity, perfect for modern kitchens",
     },
@@ -62,7 +66,7 @@ export default function Category() {
       description:
         "Professional grade stainless steel mixing bowls with non-slip base",
     },
-       {
+    {
       id: 6,
       name: "Professional Stainless Steel Mixing Bowls - 5 Set",
       currentPrice: "125",
@@ -72,26 +76,29 @@ export default function Category() {
       description:
         "Professional grade stainless steel mixing bowls with non-slip base",
     },
- 
   ];
 
-  if (Products.length === 0) {
+  // Filter products based on category query parameter
+  const filteredProducts = category 
+    ? AllProducts.filter(product => product.category === category)
+    : AllProducts;
+
+  if (filteredProducts.length === 0) {
     return (
       <section className={styles.emptyProductWrapper}>
         <Nothing
           NothingImage={EmptyCart}
-          Text="Product of this category not found"
+          Text={category ? `No products found in "${category}" category` : "No products found"}
           Alt="Category not found"
         />
       </section>
     );
   }
+
   return (
     <section className={styles.productWrapper}>
-
-
       <div className={styles.productGrid}>
-        {Products.map((product) => (
+        {filteredProducts.map((product) => (
           <ProductCard key={product.id} data={product} />
         ))}
       </div>

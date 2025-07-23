@@ -19,10 +19,10 @@
     --light-background-color: #f8f8f8;
     --section-background: #fafafa;
 
-    --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
-    --shadow-medium: 0 4px 16px rgba(37, 2, 2, 0.15);
-    --shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.2);
-    --shadow-inset: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-light: 0 2px 8px rgba(116, 116, 116, 0.1);
+    --shadow-medium: 0 4px 16px rgba(66, 66, 66, 0.15);
+    --shadow-heavy: 0 8px 32px rgba(85, 85, 85, 0.2);
+    --shadow-inset: inset 0 1px 3px rgba(31, 30, 30, 0.1);
 
     --radius-xs: 4px;
     --radius-sm: 8px;
@@ -274,12 +274,21 @@
 
 /* Tablet & Small Laptop Screens - 768px+ (48em+) */
 @media only screen and (min-width: 48em) {
+  * {
+    --app-max-width: 1200px;
+  }
 }
 
 /* Large Desktop Screens - 1025px to 1440px (64.063em - 90em) */
 @media only screen and (min-width: 64.063em) and (max-width: 90em) {
+  * {
+    --app-max-width: 1400px;
+  }
 }
 
 /* Ultra-Wide & 4K+ Screens - 1456px+ (91em+) */
 @media only screen and (min-width: 91em) {
+  * {
+    --app-max-width: 1600px;
+  }
 }
