@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Loader from "@/app/components/Loader";
 import { useAuthStore } from "@/app/store/Auth";
 import styles from "@/app/style/auth.module.css";
@@ -17,7 +17,7 @@ import {
   MdOutlineEmail as EmailIcon,
 } from "react-icons/md";
 
-export default function SignUp() {
+function SignUpForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -84,7 +84,6 @@ export default function SignUp() {
     router.push("login", { scroll: false });
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -149,149 +148,155 @@ export default function SignUp() {
   };
 
   return (
-        <div className={styles.authWrapper}>
-    <form
-      onSubmit={handleSubmit}
-      className={styles.formContainer}
-      autoComplete="on"
-    >
-      <div className={styles.formHeader}>
-        <h1>Welcome</h1>
-        <p>Enter your account details</p>
-      </div>
-
-      {/* Username */}
-      <div className={styles.authInput}>
-        <UserNameIcon className={styles.authIcon} width={24} height={24} />
-        <input
-          type="text"
-          name="username"
-          id="username"
-          value={formData.username}
-          onChange={handleInputChange}
-          placeholder="Username"
-          autoComplete="username"
-          required
-        />
-      </div>
-      {usernameError && (
-        <div className={styles.errorMessage}>{usernameError}</div>
-      )}
-
-      {/* Email */}
-      <div className={styles.authInput}>
-        <EmailIcon className={styles.authIcon} width={24} height={24} />
-        <input
-          type="email"
-          name="email"
-          id="email"
-          value={formData.email}
-          onChange={handleInputChange}
-          placeholder="Email"
-          autoComplete="email"
-          required
-        />
-      </div>
-      {/* Password */}
-      <div className={styles.authInput}>
-        <PasswordIcon className={styles.authIcon} width={24} height={24} />
-        <input
-          type={showPassword ? "text" : "password"}
-          name="password"
-          id="password"
-          value={formData.password}
-          onChange={handleInputChange}
-          placeholder="Password"
-          autoComplete="new-password"
-          required
-        />
-        <button
-          type="button"
-          className={styles.showBtn}
-          onClick={() => togglePasswordVisibility("password")}
-          aria-label="Toggle password visibility"
-        >
-          {showPassword ? (
-            <ShowPasswordIcon
-              className={styles.authIcon}
-              width={24}
-              height={24}
-            />
-          ) : (
-            <HidePasswordIcon
-              className={styles.authIcon}
-              width={24}
-              height={24}
-            />
-          )}
-        </button>
-      </div>
-
-      {/* Confirm Password */}
-      <div className={styles.authInput}>
-        <PasswordIcon className={styles.authIcon} width={24} height={24} />
-        <input
-          type={showConfirmPassword ? "text" : "password"}
-          name="confirmPassword"
-          id="confirmPassword"
-          value={formData.confirmPassword}
-          onChange={handleInputChange}
-          placeholder="Confirm Password"
-          autoComplete="new-password"
-          required
-        />
-        <button
-          type="button"
-          className={styles.showBtn}
-          onClick={() => togglePasswordVisibility("confirmPassword")}
-          aria-label="Toggle confirm password visibility"
-        >
-          {showConfirmPassword ? (
-            <ShowPasswordIcon
-              className={styles.authIcon}
-              width={24}
-              height={24}
-            />
-          ) : (
-            <HidePasswordIcon
-              className={styles.authIcon}
-              width={24}
-              height={24}
-            />
-          )}
-        </button>
-      </div>
-
-      <div className={styles.termsContainer}>
-        <input
-          type="checkbox"
-          id="terms"
-          checked={terms}
-          onChange={handleTermsChange}
-          required
-        />
-        <label htmlFor="terms" onClick={readTerms}>
-          Accept terms and conditions
-        </label>
-      </div>
-
-      {/* Submit Button */}
-      <button
-        type="submit"
-        disabled={isLoading}
-        className={styles.formAuthButton}
+    <div className={styles.authWrapper}>
+      <form
+        onSubmit={handleSubmit}
+        className={styles.formContainer}
+        autoComplete="on"
       >
-        {isLoading ? <Loader /> : "Sign up"}
-      </button>
-
-      {/* Login */}
-      <h3>
-        Already have an account?{" "}
-        <div className={styles.btnLoginContainer} onClick={Login}>
-          Login
+        <div className={styles.formHeader}>
+          <h1>Welcome</h1>
+          <p>Enter your account details</p>
         </div>
-      </h3>
-    </form>
+
+        {/* Username */}
+        <div className={styles.authInput}>
+          <UserNameIcon className={styles.authIcon} width={24} height={24} />
+          <input
+            type="text"
+            name="username"
+            id="username"
+            value={formData.username}
+            onChange={handleInputChange}
+            placeholder="Username"
+            autoComplete="username"
+            required
+          />
+        </div>
+        {usernameError && (
+          <div className={styles.errorMessage}>{usernameError}</div>
+        )}
+
+        {/* Email */}
+        <div className={styles.authInput}>
+          <EmailIcon className={styles.authIcon} width={24} height={24} />
+          <input
+            type="email"
+            name="email"
+            id="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            placeholder="Email"
+            autoComplete="email"
+            required
+          />
+        </div>
+        {/* Password */}
+        <div className={styles.authInput}>
+          <PasswordIcon className={styles.authIcon} width={24} height={24} />
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            id="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            placeholder="Password"
+            autoComplete="new-password"
+            required
+          />
+          <button
+            type="button"
+            className={styles.showBtn}
+            onClick={() => togglePasswordVisibility("password")}
+            aria-label="Toggle password visibility"
+          >
+            {showPassword ? (
+              <ShowPasswordIcon
+                className={styles.authIcon}
+                width={24}
+                height={24}
+              />
+            ) : (
+              <HidePasswordIcon
+                className={styles.authIcon}
+                width={24}
+                height={24}
+              />
+            )}
+          </button>
+        </div>
+
+        {/* Confirm Password */}
+        <div className={styles.authInput}>
+          <PasswordIcon className={styles.authIcon} width={24} height={24} />
+          <input
+            type={showConfirmPassword ? "text" : "password"}
+            name="confirmPassword"
+            id="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleInputChange}
+            placeholder="Confirm Password"
+            autoComplete="new-password"
+            required
+          />
+          <button
+            type="button"
+            className={styles.showBtn}
+            onClick={() => togglePasswordVisibility("confirmPassword")}
+            aria-label="Toggle confirm password visibility"
+          >
+            {showConfirmPassword ? (
+              <ShowPasswordIcon
+                className={styles.authIcon}
+                width={24}
+                height={24}
+              />
+            ) : (
+              <HidePasswordIcon
+                className={styles.authIcon}
+                width={24}
+                height={24}
+              />
+            )}
+          </button>
+        </div>
+
+        <div className={styles.termsContainer}>
+          <input
+            type="checkbox"
+            id="terms"
+            checked={terms}
+            onChange={handleTermsChange}
+            required
+          />
+          <label htmlFor="terms" onClick={readTerms}>
+            Accept terms and conditions
+          </label>
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={styles.formAuthButton}
+        >
+          {isLoading ? <Loader /> : "Sign up"}
+        </button>
+
+        <h3>
+          Already have an account?{" "}
+          <div className={styles.btnLoginContainer} onClick={Login}>
+            Login
+          </div>
+        </h3>
+      </form>
     </div>
+  );
+}
+
+export default function SignUp() {
+  return (
+    <Suspense fallback={<Loader />}>
+      <SignUpForm />
+    </Suspense>
   );
 }
