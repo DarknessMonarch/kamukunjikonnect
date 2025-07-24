@@ -10,7 +10,7 @@ import Dropdown from "@/app/components/Dropdown";
 import styles from "@/app/style/navbar.module.css";
 import { useDrawerStore } from "@/app/store/Drawer";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useCallback, useRef, useMemo } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo, Suspense } from "react";
 
 import {
   IoClose as CloseIcon,
@@ -429,10 +429,10 @@ const useImageUpload = (updateProfileImage) => {
           try {
             const result = await updateProfileImage(e.target.result);
 
-            if (result.success) {
+            if (result?.success) {
               toast.success("Profile image updated successfully!");
             } else {
-              toast.error(result.message || "Failed to update profile image");
+              toast.error(result?.message || "Failed to update profile image");
             }
           } catch (error) {
             console.error("Profile image update error:", error);
@@ -485,6 +485,8 @@ const useImageUpload = (updateProfileImage) => {
 };
 
 const isLinkActive = (pathname, searchParams, link) => {
+  if (!pathname) return false;
+  
   if (link.exact) {
     return pathname === link.href;
   }
@@ -592,10 +594,10 @@ const ProfileImageComponent = ({ profileImage, onImageClick, isUploading }) => (
           quality={100}
           priority={true}
           onClick={onImageClick}
-          objectFit="cover"
           style={{
             cursor: isUploading ? "not-allowed" : "pointer",
             opacity: isUploading ? 0.7 : 1,
+            objectFit: "cover",
           }}
         />
       </div>
@@ -623,7 +625,7 @@ const NavigationLinks = ({
       }
     };
 
-    if (activeDropdown) {
+    if (activeDropdown !== null) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
@@ -848,8 +850,8 @@ const RightSection = ({
 
 const CartSection = ({ onCartClick }) => {
   const { getItemCount, getSubtotal } = useCartStore();
-  const itemCount = getItemCount() || 0;
-  const subtotal = getSubtotal() || 0;
+  const itemCount = getItemCount?.() || 0;
+  const subtotal = getSubtotal?.() || 0;
 
   return (
     <div
@@ -869,18 +871,62 @@ const CartSection = ({ onCartClick }) => {
         <CartIcon className={styles.cartIcon} />
         <span className={styles.cartCount}>{itemCount}</span>
       </div>
-      <span className={styles.cartPrice}>Ksh {subtotal.toFixed(2)}</span>
+      <span className={styles.cartPrice}>{subtotal ? `Ksh ${subtotal.toFixed(2)}` : 'Ksh 0.00'}</span>
     </div>
   );
 };
 
-export default function Navbar() {
+// Loading fallback component
+const NavbarSkeleton = () => (
+  <nav className={styles.navbarWrapper} role="navigation" aria-label="Main navigation">
+    <div className={styles.navbarOffer}>
+      <OfferIcon className={styles.offerIcon} aria-hidden="true" />
+      <span className={styles.offerText}>
+        Your best kitchenware deals are here
+      </span>
+    </div>
+    <div className={styles.navbarContainerWrapper}>
+      <div className={styles.navbarContainer}>
+        <div className={styles.logoContainer}>
+          <div className="skeleton" style={{ width: 32, height: 32, borderRadius: '4px' }} />
+          <span className={styles.logoText}>KamukunjiKonnect</span>
+        </div>
+        <div className={styles.rightSection}>
+          <div className={styles.supportSection}>
+            <PhoneIcon className={styles.supportIcon} />
+            <div className={styles.supportText}>
+              <span>24/7 SUPPORT</span>
+              <span>(+254) 743-161-569</span>
+            </div>
+          </div>
+          <div className="skeleton" style={{ width: 40, height: 40, borderRadius: '50%' }} />
+        </div>
+      </div>
+    </div>
+    <div className={styles.secondaryNav}>
+      <div className={styles.cartSection}>
+        <div className={styles.cartInfo}>
+          <CartIcon className={styles.cartIcon} />
+          <span className={styles.cartCount}>0</span>
+        </div>
+        <span className={styles.cartPrice}>Ksh 0.00</span>
+      </div>
+    </div>
+  </nav>
+);
+
+const NavbarContent = () => {
   const {
     isOpen: isMobileMenuOpen,
     toggleOpen: toggleMobileMenu,
     setClose: closeMobileMenu,
   } = useDrawerStore();
-  const { isDrawerOpen: isCartOpen, toggleDrawer: toggleCart } = useCartStore();
+  const { 
+    isDrawerOpen: isCartOpen, 
+    toggleDrawer: toggleCart,
+    getItemCount,
+    getSubtotal
+  } = useCartStore();
 
   const { isMobile } = useResponsive();
   const router = useRouter();
@@ -922,18 +968,18 @@ export default function Navbar() {
   }, [isMobile, router, closeMobileMenu]);
 
   const handleLogout = useCallback(async () => {
-    if (isLoggingOut) return;
+    if (isLoggingOut || !logout) return;
 
     setIsLoggingOut(true);
     try {
       const result = await logout();
 
-      if (result.success) {
+      if (result?.success) {
         toast.success(result.message || "Logged out successfully");
         closeMobileMenu();
         router.push("/");
       } else {
-        toast.error(result.message || "Logout failed");
+        toast.error(result?.message || "Logout failed");
       }
     } catch (error) {
       console.error("Logout error:", error);
@@ -1055,4 +1101,14 @@ export default function Navbar() {
       </nav>
     </>
   );
+};
+
+
+export default function Navbar() {
+  return (
+    <Suspense fallback={<NavbarSkeleton />}>
+      <NavbarContent />
+    </Suspense>
+  );
 }
+

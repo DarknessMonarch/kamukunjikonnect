@@ -1,6 +1,8 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+import LoadingLogo from "@/app/components/loadingLogo";
 import Spoons from "@/public/assets/spoons.png";
 import KitchenSet from "@/public/assets/kitchenset.png";
 import Plates from "@/public/assets/plates.png";
@@ -11,7 +13,8 @@ import ProductCard from "@/app/components/productCard";
 import Nothing from "@/app/components/Nothing";
 import EmptyCart from "@/public/assets/emptycart.png";
 
-export default function Category() {
+// Separate component that uses useSearchParams
+function CategoryContent() {
   const searchParams = useSearchParams();
   const category = searchParams.get('category');
 
@@ -34,7 +37,7 @@ export default function Category() {
       image: KitchenSet,
       category: "cookware",
       description:
-        "Complete 12-piece non-stick cookware set for all your cooking needs",
+        "Complete 12-piece non-stick cookware set for all your coding needs",
     },
     {
       id: 3,
@@ -103,5 +106,22 @@ export default function Category() {
         ))}
       </div>
     </section>
+  );
+}
+
+// Loading fallback component
+function CategoryFallback() {
+  return (
+    <section className={styles.productWrapper}>
+      <LoadingLogo />
+    </section>
+  );
+}
+
+export default function Category() {
+  return (
+    <Suspense fallback={<CategoryFallback />}>
+      <CategoryContent />
+    </Suspense>
   );
 }
