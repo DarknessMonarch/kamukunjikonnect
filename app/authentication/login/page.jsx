@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Loader from "@/app/components/Loader";
 import { useAuthStore } from "@/app/store/Auth";
@@ -18,13 +18,25 @@ import { MdOutlineVpnKey as PasswordIcon } from "react-icons/md";
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuthStore();
+  
+  const { login, isAuth } = useAuthStore();
   const router = useRouter();
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    if (isAuth) {
+      router.push("/", { scroll: false });
+    }
+  }, [isAuth, router]);
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -35,12 +47,26 @@ export default function Login() {
     setShowPassword(!showPassword);
   };
 
-  const forgotPassword = () => {
-    router.push("resetcode", { scroll: false });
+  const handleForgotPassword = () => {
+    router.push("/authentication/resetcode", { scroll: false });
   };
 
-  const SignUp = () => {
-    router.push("signup", { scroll: false });
+  const handleSignUp = () => {
+    router.push("/authentication/signup", { scroll: false });
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !isLoading) {
+      onSubmit(e);
+    }
+  };
+
+  const isFormValid = () => {
+    return (
+      formData.email.trim() &&
+      formData.password.trim() &&
+      validateEmail(formData.email.trim())
+    );
   };
 
   async function onSubmit(e) {
@@ -50,7 +76,13 @@ export default function Login() {
       toast.error("Email is required");
       return;
     }
-    if (!formData.password) {
+
+    if (!validateEmail(formData.email.trim())) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    if (!formData.password.trim()) {
       toast.error("Password is required");
       return;
     }
@@ -58,32 +90,27 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const result = await login(formData.email, formData.password);
+      const result = await login(formData.email.trim(), formData.password);
 
       if (result.success) {
-        toast.success(result.message || "Welcome");
+        toast.success(result.message || "Welcome back!");
 
-        switch (true) {
-          case result.isAdmin:
-            router.push("/", { scroll: false });
-            toast.success("Welcome Admin!");
-            break;
+        setFormData({ email: "", password: "" });
 
-          case result.isVip && !result.isAdmin:
-            router.push("/vip", { scroll: false });
-            toast.success("Welcome VIP!");
-            break;
-
-          default:
-            router.push("/", { scroll: false });
+        router.push("/", { scroll: false });
             toast.success("Welcome back!");
-            break;
-        }
+        
       } else {
-        toast.error(result.message || "Login failed");
+        if (result.requiresVerification) {
+          toast.error(result.message);
+          router.push(`/authentication/verification?email=${encodeURIComponent(result.email)}`, { scroll: false });
+        } else {
+          toast.error(result.message || "Login failed. Please check your credentials.");
+        }
       }
     } catch (error) {
-      toast.error("An error occurred during login");
+      console.error("Login error:", error);
+      toast.error("An error occurred during login. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -97,10 +124,10 @@ export default function Login() {
         autoComplete="on"
       >
         <div className={styles.formHeader}>
-     
           <h1>Welcome back</h1>
           <p>Enter your account details</p>
         </div>
+
         {/* Email */}
         <div className={styles.authInput}>
           <UserNameIcon
@@ -109,17 +136,20 @@ export default function Login() {
             width={20}
             height={20}
           />
-          <input
+          <input 
             type="email"
             name="email"
             id="email"
             value={formData.email}
             onChange={handleInputChange}
-            placeholder="Email"
+            onKeyPress={handleKeyPress}
+            placeholder="Enter your email"
             autoComplete="username"
+            disabled={isLoading}
             required
           />
         </div>
+
         {/* Password */}
         <div className={styles.authInput}>
           <PasswordIcon
@@ -134,14 +164,18 @@ export default function Login() {
             id="password"
             value={formData.password}
             onChange={handleInputChange}
-            placeholder="Password"
+            onKeyPress={handleKeyPress}
+            placeholder="Enter your password"
             autoComplete="current-password"
+            disabled={isLoading}
             required
           />
           <button
             type="button"
             className={styles.showBtn}
             onClick={toggleShowPassword}
+            disabled={isLoading}
+            aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? (
               <ShowPasswordIcon
@@ -158,22 +192,43 @@ export default function Login() {
             )}
           </button>
         </div>
-        {/* Forgot Password */}
-        <div className={styles.forgotpasswordspan}>
-          <span onClick={forgotPassword}>Forgot Password</span>
-        </div>
+
+          <span 
+            className={styles.forgotpasswordspan}
+            onClick={handleForgotPassword}
+            role="button"
+            tabIndex={0}
+          >
+            Forgot Password?
+          </span>
+
         <button
           type="submit"
-          disabled={isLoading}
-          className={styles.formAuthButton}
+          disabled={isLoading || !isFormValid()}
+          className={`${styles.formAuthButton} ${
+            isLoading || !isFormValid() ? styles.disabled : ""
+          }`}
         >
-          {isLoading ? <Loader /> : "Login"}
+          {isLoading ? <Loader /> : "Sign In"}
         </button>
+
+
+
         <h3>
           Don&apos;t have an account?{" "}
-          <div className={styles.btnLoginContainer} onClick={SignUp}>
+          <span 
+            className={styles.btnLoginContainer} 
+            onClick={handleSignUp}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleSignUp();
+              }
+            }}
+          >
             Sign up
-          </div>
+          </span>
         </h3>
       </form>
     </div>

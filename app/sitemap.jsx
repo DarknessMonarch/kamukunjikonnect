@@ -2,7 +2,7 @@ async function getMatchUrls() {
   try {
     const baseUrl = process.env.NODE_ENV === 'development' 
       ? 'http://localhost:3000' 
-      : (process.env.NEXT_PUBLIC_API_URL || 'https://sportypredict.com');
+      : (process.env.NEXT_PUBLIC_API_URL || 'https://kamukunjikonnect.shop');
     
     const apiUrl = `${baseUrl}/api/predictions/sitemap`;
     
@@ -35,7 +35,7 @@ async function getMatchUrls() {
       const slug = prediction.slug || `${prediction.cleanTeamA}-vs-${prediction.cleanTeamB}`;
       const category = prediction.category?.toLowerCase() || 'football';
       
-      const url = `https://sportypredict.com/page/${category}/single/${slug}?date=${prediction.date}`;
+      const url = `https://kamukunjikonnect.shop/page/${category}/single/${slug}?date=${prediction.date}`;
       
       return {
         url,
@@ -56,7 +56,7 @@ async function getNewsUrls() {
   try {
     const baseUrl = process.env.NODE_ENV === 'development' 
       ? 'http://localhost:3000' 
-      : (process.env.NEXT_PUBLIC_API_URL || 'https://sportypredict.com');
+      : (process.env.NEXT_PUBLIC_API_URL || 'https://kamukunjikonnect.shop');
     
     const apiUrl = `${baseUrl}/api/news/sitemap`;
     
@@ -90,7 +90,7 @@ async function getNewsUrls() {
         .replace(/^-+|-+$/g, '');
 
       return {
-        url: `https://sportypredict.com/page/news?article=${slug}`,
+        url: `https://kamukunjikonnect.shop/page/news?article=${slug}`,
         lastModified: new Date(article.updatedAt || article.publishDate || article.createdAt),
         changeFrequency: 'daily',
         priority: article.featured ? 0.8 : 0.7,
@@ -108,7 +108,7 @@ async function getBlogUrls() {
   try {
     const baseUrl = process.env.NODE_ENV === 'development' 
       ? 'http://localhost:3000' 
-      : (process.env.NEXT_PUBLIC_API_URL || 'https://sportypredict.com');
+      : (process.env.NEXT_PUBLIC_API_URL || 'https://kamukunjikonnect.shop');
     
     const apiUrl = `${baseUrl}/api/blog/sitemap`;
     
@@ -146,7 +146,7 @@ async function getBlogUrls() {
         .replace(/^-+|-+$/g, '');
 
       return {
-        url: `https://sportypredict.com/page/blog?blog=${slug}`,
+        url: `https://kamukunjikonnect.shop/page/blog?blog=${slug}`,
         lastModified: new Date(blog.updatedAt || blog.publishedAt || blog.createdAt),
         changeFrequency: blog.featured ? 'weekly' : 'monthly',
         priority: blog.featured ? 0.8 : 0.6,
@@ -167,7 +167,7 @@ async function getCategoryUrls() {
     const newsCategories = ['football', 'basketball', 'tennis'];
     newsCategories.forEach(category => {
       categoryUrls.push({
-        url: `https://sportypredict.com/page/news?category=${category}`,
+        url: `https://kamukunjikonnect.shop/page/news?category=${category}`,
         lastModified: new Date(),
         changeFrequency: 'daily',
         priority: 0.7,
@@ -177,7 +177,7 @@ async function getCategoryUrls() {
     const blogCategories = ['Sports', 'Betting', 'Analysis', 'Tips'];
     blogCategories.forEach(category => {
       categoryUrls.push({
-        url: `https://sportypredict.com/page/blog?category=${encodeURIComponent(category)}`,
+        url: `https://kamukunjikonnect.shop/page/blog?category=${encodeURIComponent(category)}`,
         lastModified: new Date(),
         changeFrequency: 'weekly',
         priority: 0.6,
@@ -192,7 +192,7 @@ async function getCategoryUrls() {
 }
 
 export default async function sitemap() {
-  const baseUrl = "https://sportypredict.com";
+  const baseUrl = "https://kamukunjikonnect.shop";
 
   const mainRoutes = [
     {

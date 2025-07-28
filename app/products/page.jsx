@@ -33,7 +33,7 @@ function ProductList() {
       reviews: 12,
       discount: 10,
       description: "Premium digital smart toaster with 4-slice capacity, perfect for modern kitchens. Features advanced browning control, cancel function, and removable crumb tray for easy cleaning.",
-    },
+    },          
     {
       id: 2,
       name: "Premium Kitchen Cookware Set - 12 Pieces",

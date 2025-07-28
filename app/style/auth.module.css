@@ -7,11 +7,12 @@
   }
 
   .formContainer {
-    gap: var(--spacing-lg);
+    gap: 20px;
     width: 100%;
+    padding: 10px;
     display: flex;
     flex-direction: column;
-    padding: var(--spacing-xl);
+
   }
 
   .formHeader {
@@ -78,7 +79,7 @@
     font-size: var(--font-size-sm);
     color: var(--warm-gray);
   }
-  
+
   .authIcon {
     font-size: 20px;
     color: var(--warm-gray);
@@ -210,25 +211,27 @@
     align-items: center;
     justify-content: flex-end;
   }
+.formChange span,
+.forgotpasswordspan {
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--warm-gray);
+  text-decoration: underline;
+  transition: color 0.2s ease-in-out;
+}
 
-  .formChange span,
-  .forgotpasswordspan span {
-    cursor: pointer;
-    font-size: var(--font-size-sm);
-    color: var(--warm-gray);
-    text-decoration: underline;
-    transition: color 0.2s ease;
-  }
 
   .formChange span:hover,
-  .forgotpasswordspan span:hover {
+.forgotpasswordspan:hover {
     color: var(--secondary-color);
-  }
+
+}
 
   .authBottomBtn p span {
     font-size: var(--font-size-xs);
     text-decoration: underline;
   }
+
 
   .formContainer h3 {
     gap: var(--spacing-sm);
@@ -267,7 +270,7 @@
     width: 100%;
     min-width: 400px;
     max-width: 500px;
-    padding: var(--spacing-xxxl);
+    padding: var(--spacing-xl);
     background: var(--light-color);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-medium);
@@ -298,7 +301,7 @@
   .authComponentBgImage {
     flex: 0 0 50%;
   }
-  
+
   .formContainer {
     min-width: 350px;
     max-width: 420px;
@@ -310,7 +313,7 @@
   .authComponentBgImage {
     flex: 0 0 50%;
   }
-  
+
   .formContainer {
     min-width: 400px;
     max-width: 480px;
@@ -322,7 +325,7 @@
   .authComponentBgImage {
     flex: 0 0 50%;
   }
-  
+
   .formContainer {
     min-width: 420px;
     max-width: 520px;

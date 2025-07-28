@@ -625,14 +625,14 @@ const NavigationLinks = ({
       }
     };
 
-    if (activeDropdown !== null) {
+    if (activeDropdown !== null && !isMobile) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [activeDropdown, setActiveDropdown]);
+  }, [activeDropdown, setActiveDropdown, isMobile]);
 
   const handleInteraction = (link, index) => {
     if (link.hasDropdown) {
@@ -722,6 +722,64 @@ const NavigationLinks = ({
           </div>
         );
       })}
+    </div>
+  );
+};
+
+const MobileMenuOverlay = ({ 
+  isOpen, 
+  onClose, 
+  pathname, 
+  searchParams, 
+  activeDropdown, 
+  setActiveDropdown 
+}) => {
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsClosing(false);
+      onClose();
+    }, 300); // Match the animation duration
+  };
+
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) {
+      handleClose();
+    }
+  };
+
+  if (!isOpen && !isClosing) return null;
+
+  return (
+    <div 
+      className={styles.mobileMenuOverlay}
+      onClick={handleOverlayClick}
+    >
+      <div className={`${styles.mobileMenuContent} ${
+        isClosing ? styles.slideOut : styles.slideIn
+      }`}>
+        <div className={styles.mobileMenuHeader}>
+          <h2 className={styles.mobileMenuTitle}>Navigation Menu</h2>
+          <button
+            className={styles.mobileMenuClose}
+            onClick={handleClose}
+            aria-label="Close navigation menu"
+          >
+            <CloseIcon className={styles.closeIcon} />
+          </button>
+        </div>
+        
+        <NavigationLinks
+          pathname={pathname}
+          searchParams={searchParams || new URLSearchParams()}
+          onLinkClick={handleClose}
+          activeDropdown={activeDropdown}
+          setActiveDropdown={setActiveDropdown}
+          isMobile={true}
+        />
+      </div>
     </div>
   );
 };
@@ -876,7 +934,6 @@ const CartSection = ({ onCartClick }) => {
   );
 };
 
-// Loading fallback component
 const NavbarSkeleton = () => (
   <nav className={styles.navbarWrapper} role="navigation" aria-label="Main navigation">
     <div className={styles.navbarOffer}>
@@ -1003,6 +1060,31 @@ const NavbarContent = () => {
     toggleCart();
   }, [toggleCart]);
 
+  // Close mobile menu when clicking outside or on escape
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && isMobileMenuOpen) {
+        closeMobileMenu();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isMobileMenuOpen, closeMobileMenu]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
+
   const fileInputProps = useMemo(
     () => ({
       ref: fileInputRef,
@@ -1021,9 +1103,7 @@ const NavbarContent = () => {
       <input {...fileInputProps} />
 
       <nav
-        className={`${styles.navbarWrapper} ${
-          isMobileMenuOpen ? styles.mobileNavOpen : ""
-        }`}
+        className={styles.navbarWrapper}
         role="navigation"
         aria-label="Main navigation"
       >
@@ -1083,26 +1163,20 @@ const NavbarContent = () => {
 
           <CartSection onCartClick={handleCartClick} />
         </div>
-
-        {isMobile && isMobileMenuOpen && (
-          <div className={styles.mobileMenuOverlay}>
-            <div className={styles.mobileMenuContent}>
-              <NavigationLinks
-                pathname={pathname}
-                searchParams={searchParams || new URLSearchParams()}
-                onLinkClick={handleLinkClick}
-                activeDropdown={activeDropdown}
-                setActiveDropdown={setActiveDropdown}
-                isMobile={isMobile}
-              />
-            </div>
-          </div>
-        )}
       </nav>
+
+      {/* Mobile Menu Overlay - Similar to Cart Drawer */}
+      <MobileMenuOverlay
+        isOpen={isMobileMenuOpen}
+        onClose={closeMobileMenu}
+        pathname={pathname}
+        searchParams={searchParams}
+        activeDropdown={activeDropdown}
+        setActiveDropdown={setActiveDropdown}
+      />
     </>
   );
 };
-
 
 export default function Navbar() {
   return (
@@ -1110,5 +1184,4 @@ export default function Navbar() {
       <NavbarContent />
     </Suspense>
   );
-}
-
+} 

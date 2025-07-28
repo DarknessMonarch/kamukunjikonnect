@@ -26,7 +26,7 @@ const BANNER_URL =
   "https://raw.githubusercontent.com/DarknessMonarch/kamukunjikonnect/refs/heads/master/public/assets/banner.png";
 
 export const viewport = {
-  themeColor: "#2d2d2d",
+  themeColor: "#d4793f",
 };
 
 export const metadata = {

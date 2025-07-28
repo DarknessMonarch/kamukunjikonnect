@@ -13,28 +13,44 @@ export default function ResetCode() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const router = useRouter();
+  
+  // Using the store function - already correctly integrated
   const requestPasswordReset = useAuthStore(
     (state) => state.requestPasswordReset
   );
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     if (!email.trim()) {
       toast.error("Email is required");
+      return;
+    }
+
+    if (!validateEmail(email.trim())) {
+      toast.error("Please enter a valid email address");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const result = await requestPasswordReset(email);
+      const result = await requestPasswordReset(email.trim());
 
       if (result.success) {
-        toast.success(result.message);
+        toast.success(result.message || "Password reset link sent successfully!");
+        // Optionally redirect to a confirmation page or login
+        // router.push("/auth/reset-confirmation");
       } else {
-        toast.error(result.message);
+        toast.error(result.message || "Failed to send reset link");
       }
     } catch (error) {
+      console.error("Password reset error:", error);
       toast.error("An error occurred while requesting password reset");
     } finally {
       setIsLoading(false);
@@ -42,50 +58,71 @@ export default function ResetCode() {
   };
 
   const handleLogin = () => {
-    router.push("login"); 
+    router.push("/auth/login"); // Added /auth/ prefix for better routing
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !isLoading) {
+      handleSubmit(e);
+    }
   };
 
   return (
-  <div className={styles.authWrapper}>
-        <form onSubmit={handleSubmit} className={styles.formContainer}>
-          <div className={styles.formHeader}>
-          
-            <h1>Forgot Password</h1>
-            <p>Enter your email to recieve the reset link</p>
-          </div>
+    <div className={styles.authWrapper}>
+      <form onSubmit={handleSubmit} className={styles.formContainer}>
+        <div className={styles.formHeader}>
+          <h1>Forgot Password</h1>
+          <p>Enter your email to receive the reset link</p>
+        </div>
 
-          <div className={styles.authInput}>
-            <EmailIcon
-              className={styles.authIcon}
-              alt="Email icon"
-              width={20}
-              height={20}
-            />
-            <input
-              type="email"
-              name="Email"
-              id="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-            />
-          </div>
-
-          <button
-            type="submit"
+        <div className={styles.authInput}>
+          <EmailIcon
+            className={styles.authIcon}
+            alt="Email icon"
+            width={20}
+            height={20}
+          />
+          <input
+            type="email"
+            name="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Enter your email address"
             disabled={isLoading}
-            className={styles.formAuthButton}
+            autoComplete="email"
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading || !email.trim()}
+          className={`${styles.formAuthButton} ${
+            isLoading || !email.trim() ? styles.disabled : ""
+          }`}
+        >
+          {isLoading ? <Loader /> : "Send Reset Link"}
+        </button>
+        
+        <h3>
+          Remember your password?{" "}
+          <span 
+            className={styles.btnLoginContainer} 
+            onClick={handleLogin}
+            role="button"
+            tabIndex={0}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleLogin();
+              }
+            }}
           >
-            {isLoading ? <Loader /> : "Request reset"}
-          </button>
-          
-          <h3>
-            Remember your password?{" "}
-            <div className={styles.btnLoginContainer} onClick={handleLogin}>
-              Login
-            </div>
-          </h3>
-        </form>
-      </div>
+            Login
+          </span>
+        </h3>
+      </form>
+    </div>
   );
 }

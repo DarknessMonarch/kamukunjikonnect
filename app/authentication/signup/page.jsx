@@ -34,7 +34,13 @@ function SignUpForm() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { register } = useAuthStore();
+  const { register, isAuth } = useAuthStore();
+
+  useEffect(() => {
+    if (isAuth) {
+      router.push("/", { scroll: false });
+    }
+  }, [isAuth, router]);
 
   useEffect(() => {
     const referralParam = searchParams.get("referral");
@@ -44,8 +50,30 @@ function SignUpForm() {
   }, [searchParams]);
 
   const validateUsername = (username) => {
+    if (!username.trim()) {
+      setUsernameError("Username is required");
+      return false;
+    }
+
     if (username.includes("@")) {
       setUsernameError("Username cannot be an email address");
+      return false;
+    }
+
+    if (username.length < 3) {
+      setUsernameError("Username must be at least 3 characters long");
+      return false;
+    }
+
+    if (username.length > 20) {
+      setUsernameError("Username must be less than 20 characters");
+      return false;
+    }
+
+
+    const usernameRegex = /^[a-zA-Z0-9_-]+$/;
+    if (!usernameRegex.test(username)) {
+      setUsernameError("Username can only contain letters, numbers, underscores, and hyphens");
       return false;
     }
 
@@ -53,12 +81,26 @@ function SignUpForm() {
     return true;
   };
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "username") {
       setFormData((prev) => ({ ...prev, [name]: value }));
-      validateUsername(value);
+      if (value.trim()) {
+        validateUsername(value);
+      } else {
+        setUsernameError("");
+      }
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -81,39 +123,19 @@ function SignUpForm() {
   };
 
   const Login = () => {
-    router.push("login", { scroll: false });
+    router.push("/login", { scroll: false });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.username.trim()) {
-      toast.error("Username is required");
-      return;
-    }
 
-    if (!validateUsername(formData.username)) {
-      toast.error(usernameError);
-      return;
-    }
 
-    if (!formData.email.trim()) {
-      toast.error("Email is required");
-      return;
-    }
-
-    if (!formData.password) {
-      toast.error("Password is required");
-      return;
-    }
-    if (!formData.confirmPassword) {
-      toast.error("Please confirm your password");
-      return;
-    }
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
+
     if (!terms) {
       toast.error("Please accept the terms and conditions");
       return;
@@ -123,11 +145,11 @@ function SignUpForm() {
 
     try {
       const userData = {
-        username: formData.username,
-        email: formData.email,
+        username: formData.username.trim(),
+        email: formData.email.trim().toLowerCase(),
         password: formData.password,
       };
-
+      // Add referral if present
       if (referral) {
         userData.referredBy = referral;
       }
@@ -135,13 +157,17 @@ function SignUpForm() {
       const result = await register(userData);
 
       if (result.success) {
-        toast.success(result.message);
-        router.push("verification", { scroll: false });
+        toast.success(result.message || "Registration successful! Please check your email for verification.");
+        
+        sessionStorage.setItem("verificationEmail", formData.email);
+        
+        router.push("/verification", { scroll: false });
       } else {
-        toast.error(result.message);
+        toast.error(result.message || "Registration failed. Please try again.");
       }
     } catch (error) {
-      toast.error(error.message);
+      console.error("Registration error:", error);
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -156,7 +182,7 @@ function SignUpForm() {
       >
         <div className={styles.formHeader}>
           <h1>Welcome</h1>
-          <p>Enter your account details</p>
+          <p>Create your account to get started</p>
         </div>
 
         {/* Username */}
@@ -170,6 +196,7 @@ function SignUpForm() {
             onChange={handleInputChange}
             placeholder="Username"
             autoComplete="username"
+            maxLength={20}
             required
           />
         </div>
@@ -186,11 +213,12 @@ function SignUpForm() {
             id="email"
             value={formData.email}
             onChange={handleInputChange}
-            placeholder="Email"
+            placeholder="Email address"
             autoComplete="email"
             required
           />
         </div>
+
         {/* Password */}
         <div className={styles.authInput}>
           <PasswordIcon className={styles.authIcon} width={24} height={24} />
@@ -269,8 +297,11 @@ function SignUpForm() {
             onChange={handleTermsChange}
             required
           />
-          <label htmlFor="terms" onClick={readTerms}>
-            Accept terms and conditions
+          <label htmlFor="terms">
+            I agree to the{" "}
+            <span onClick={readTerms} className={styles.termsLink}>
+              terms and conditions
+            </span>
           </label>
         </div>
 
@@ -279,15 +310,17 @@ function SignUpForm() {
           disabled={isLoading}
           className={styles.formAuthButton}
         >
-          {isLoading ? <Loader /> : "Sign up"}
+          {isLoading ? <Loader /> : "Create Account"}
         </button>
 
-        <h3>
-          Already have an account?{" "}
-          <div className={styles.btnLoginContainer} onClick={Login}>
-            Login
-          </div>
-        </h3>
+        <div className={styles.authFooter}>
+          <p>
+            Already have an account?{" "}
+            <span className={styles.authLink} onClick={Login}>
+              Sign in
+            </span>
+          </p>
+        </div>
       </form>
     </div>
   );
