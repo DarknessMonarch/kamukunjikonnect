@@ -2,9 +2,8 @@
 
 import { toast } from 'sonner';
 import Image from "next/image";
-import Loader from "@/app/components/StateLoader";
+import Loader from "@/app/components/Loader";
 import { useAuthStore } from "@/app/store/Auth";
-import countries from "@/app/utility/Countries";
 import { redirect, useRouter } from "next/navigation";
 import styles from "@/app/style/settings.module.css";
 import ProfileImg from "@/public/assets/banner.png";
@@ -15,23 +14,13 @@ import {
   FiEyeOff as HidePasswordIcon,
 } from "react-icons/fi";
 import { IoCopy as CopyIcon } from "react-icons/io5";
-import { FaLink as LinkIcon } from "react-icons/fa";
-import { BiWorld as CountryIcon } from "react-icons/bi";
 import { MdDelete as DeleteIcon } from "react-icons/md";
 import { FaRegUser as UserNameIcon } from "react-icons/fa6";
-import { RiArrowDropDownLine as DropdownIcon } from "react-icons/ri";
 import {
   MdOutlineVpnKey as PasswordIcon,
   MdOutlineEmail as EmailIcon,
   MdModeEdit as EditIcon,
 } from "react-icons/md";
-
-import Instagram from "@/public/icons/instagram.svg";
-import Whatsapp from "@/public/icons/whatsapp.svg";
-import LinkedIn from "@/public/icons/linkedIn.svg";
-import Telegram from "@/public/icons/telegram.svg";
-import Twitter from "@/public/icons/twitter.svg";
-import Youtube from "@/public/icons/youtube.svg";
 
 export default function Settings() {
   const {
@@ -93,13 +82,6 @@ export default function Settings() {
     generateShareLink();
   }, [generateShareLink]);
 
-  useEffect(() => {
-    const countryObj = countries.find((c) => c.code === formData.country);
-    if (countryObj) {
-      setSearchTerm(countryObj.name);
-    }
-  }, [formData.country]);
-
   const copyLink = () => {
     navigator.clipboard.writeText(shareLink).then(() => {
       setIsCopied(true);
@@ -112,34 +94,6 @@ export default function Settings() {
     window.open(`${baseUrl}${encodeURIComponent(shareLink)}`, "_blank");
   };
 
-  const socialData = [
-    {
-      name: "Twitter",
-      icons: Twitter,
-      link: "https://twitter.com/intent/tweet?url=",
-    },
-    {
-      name: "Youtube",
-      icons: Youtube,
-      link: "https://www.youtube.com/share?url=",
-    },
-    { name: "Telegram", icons: Telegram, link: "https://t.me/share/url?url=" },
-    {
-      name: "LinkedIn",
-      icons: LinkedIn,
-      link: "https://www.linkedin.com/sharing/share-offsite/?url=",
-    },
-    {
-      name: "Whatsapp",
-      icons: Whatsapp,
-      link: "https://api.whatsapp.com/send?text=",
-    },
-    {
-      name: "Instagram",
-      icons: Instagram,
-      link: "https://www.instagram.com/share?url=",
-    },
-  ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -169,9 +123,6 @@ export default function Settings() {
     setErrors((prev) => ({ ...prev, country: "" }));
   };
 
-  const filteredCountries = countries.filter((country) =>
-    country.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -432,55 +383,6 @@ export default function Settings() {
               )}
             </div>
 
-            <div className={styles.settingInputContainer}>
-              <label htmlFor="country" className={styles.settingLabel}>
-                Country
-              </label>
-              <div className={styles.settingInput}>
-                <CountryIcon
-                  height={20}
-                  alt="country icon"
-                  className={styles.settingIcon}
-                />
-                <div className={styles.dropdownContainer} ref={dropdownRef}>
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                      setIsOpen(true);
-                    }}
-                    onClick={() => setIsOpen(true)}
-                    placeholder="Search Country"
-                    className={styles.dropdownInput}
-                  />
-                  <DropdownIcon
-                    alt="dropdown icon"
-                    height={20}
-                    className={`${styles.dropdownIcon} ${
-                      isOpen ? styles.open : ""
-                    }`}
-                    onClick={() => setIsOpen(!isOpen)}
-                  />
-                  {isOpen && (
-                    <div className={styles.dropdownArea}>
-                      {filteredCountries.map((country) => (
-                        <span
-                          key={country.code}
-                          className={styles.dropdownOption}
-                          onClick={() => handleCountrySelect(country)}
-                        >
-                          {country.name}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-              {errors.country && (
-                <p className={styles.errorText}>{errors.country}</p>
-              )}
-            </div>
 
             <button
               type="submit"
