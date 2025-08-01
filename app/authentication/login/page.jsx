@@ -103,7 +103,7 @@ export default function Login() {
       } else {
         if (result.requiresVerification) {
           toast.error(result.message);
-          router.push(`/authentication/verification?email=${encodeURIComponent(result.email)}`, { scroll: false });
+          router.push(`/authentication/verification`, { scroll: false });
         } else {
           toast.error(result.message || "Login failed. Please check your credentials.");
         }

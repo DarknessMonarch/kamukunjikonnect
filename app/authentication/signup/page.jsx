@@ -70,7 +70,6 @@ function SignUpForm() {
       return false;
     }
 
-
     const usernameRegex = /^[a-zA-Z0-9_-]+$/;
     if (!usernameRegex.test(username)) {
       setUsernameError("Username can only contain letters, numbers, underscores, and hyphens");
@@ -79,16 +78,6 @@ function SignUpForm() {
 
     setUsernameError("");
     return true;
-  };
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePassword = (password) => {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return passwordRegex.test(password);
   };
 
   const handleInputChange = (e) => {
@@ -123,55 +112,51 @@ function SignUpForm() {
   };
 
   const Login = () => {
-    router.push("/login", { scroll: false });
+    router.push("/authentication/login", { scroll: false });
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
+  if (formData.password !== formData.confirmPassword) {
+    toast.error("Passwords do not match");
+    return;
+  }
 
+  if (!terms) {
+    toast.error("Please accept the terms and conditions");
+    return;
+  }
 
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
+  setIsLoading(true);
+
+  try {
+    const userData = {
+      username: formData.username.trim(),
+      email: formData.email.trim().toLowerCase(),
+      password: formData.password,
+    };
+
+    if (referral) {
+      userData.referredBy = referral;
     }
 
-    if (!terms) {
-      toast.error("Please accept the terms and conditions");
-      return;
+    const result = await register(userData);
+
+    if (result.success) {
+      toast.success(result.message || "Registration successful! Please check your email for verification.");
+      
+      router.push("/authentication/verification", { scroll: false });
+    } else {
+      toast.error(result.message || "Registration failed. Please try again.");
     }
-
-    setIsLoading(true);
-
-    try {
-      const userData = {
-        username: formData.username.trim(),
-        email: formData.email.trim().toLowerCase(),
-        password: formData.password,
-      };
-      // Add referral if present
-      if (referral) {
-        userData.referredBy = referral;
-      }
-
-      const result = await register(userData);
-
-      if (result.success) {
-        toast.success(result.message || "Registration successful! Please check your email for verification.");
-        
-        sessionStorage.setItem("verificationEmail", formData.email);
-        
-        router.push("/verification", { scroll: false });
-      } else {
-        toast.error(result.message || "Registration failed. Please try again.");
-      }
-    } catch (error) {
-      console.error("Registration error:", error);
-      toast.error("An unexpected error occurred. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  } catch (error) {
+    console.error("Registration error:", error);
+    toast.error("An unexpected error occurred. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className={styles.authWrapper}>

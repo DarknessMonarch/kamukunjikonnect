@@ -14,6 +14,7 @@ import styles from '@/app/style/cartdrawer.module.css'
 import {
   IoCartOutline as CartIcon,
   IoClose as CloseIcon,
+  IoPersonOutline as LoginIcon,
 } from "react-icons/io5";
 
 import Toaster from "@/public/assets/toaster.png";
@@ -42,7 +43,15 @@ const mockProducts = [
 
 export default function CartComponent({ delivery = 50 }) {
   const router = useRouter()
-  const authStore = useAuthStore()
+  const { 
+    isAuth, 
+    accessToken, 
+    firstName, 
+    lastName, 
+    email,
+    emailVerified,
+    isInitialized 
+  } = useAuthStore()
   
   const { 
     items: cartItems, 
@@ -56,12 +65,28 @@ export default function CartComponent({ delivery = 50 }) {
     getSubtotal,
     getDeliveryFee,
     getTotal,
-    setLoading
+    setLoading,
+    clearCart
   } = useCartStore()
+
+  // Initialize auth when component mounts
+  useEffect(() => {
+    const initAuth = async () => {
+      if (!isInitialized) {
+        await useAuthStore.getState().initializeAuth()
+      }
+    }
+    initAuth()
+  }, [isInitialized])
 
   const handleUpdateQuantity = async (itemId, newQuantity) => {
     setLoading(true)
     try {
+      // If user is authenticated, you could sync with server here
+      if (isAuth && accessToken) {
+        // Example: await syncCartToServer(itemId, newQuantity)
+      }
+      
       await new Promise(resolve => setTimeout(resolve, 500))
       
       updateQuantity(itemId, newQuantity)
@@ -77,6 +102,11 @@ export default function CartComponent({ delivery = 50 }) {
   const handleRemoveItem = async (itemId) => {
     setLoading(true)
     try {
+      // If user is authenticated, you could sync with server here
+      if (isAuth && accessToken) {
+        // Example: await removeFromServerCart(itemId)
+      }
+      
       await new Promise(resolve => setTimeout(resolve, 500))
       
       removeItem(itemId)
@@ -89,14 +119,30 @@ export default function CartComponent({ delivery = 50 }) {
     }
   }
 
+  const handleLogin = () => {
+    closeDrawer()
+    router.push('/login')
+  }
+
   const pay = () => {
-    if (!authStore.token) {
-      router.push('/login')
-      toast.error('Login to proceed')
-    } else {
-      router.push('/payment')
-      closeDrawer()
+    if (!isAuth || !accessToken) {
+      toast.error('Please login to proceed with checkout')
+      handleLogin()
+      return
     }
+
+    if (!emailVerified) {
+      toast.error('Please verify your email before checkout')
+      return
+    }
+
+    if (cartItems.length === 0) {
+      toast.error('Your cart is empty')
+      return
+    }
+
+    router.push('/payment')
+    closeDrawer()
   }
 
   const currentSubtotal = getSubtotal() || 0
@@ -105,18 +151,30 @@ export default function CartComponent({ delivery = 50 }) {
 
   return (
     <div className={`${styles.cartComponent} ${isDrawerOpen ? styles.slideIn : styles.slideOut}`}>
-        <div className={styles.cartHeader}>
-          <CloseIcon 
-            className={styles.iconExit}
-            onClick={() => toggleDrawer()}
-          />
-          <h1>My Cart ({cartItems.length})</h1>
-          <CartIcon className={styles.iconCart} />
+      <div className={styles.cartHeader}>
+        <CloseIcon 
+          className={styles.iconExit}
+          onClick={() => toggleDrawer()}
+        />
+        <h1>My Cart ({cartItems.length})</h1>
+        <CartIcon className={styles.iconCart} />
+      </div>
+
+      {/* Auth Status Display */}
+      {isAuth && (
+        <div className={styles.userInfo}>
+          <p>Welcome back, {firstName || email}!</p>
+          {!emailVerified && (
+            <p className={styles.verificationWarning}>
+              Please verify your email to complete checkout
+            </p>
+          )}
         </div>
+      )}
       
       <div className={styles.cartContent}>
         {cartItems.length === 0 ? (
-         <Nothing NothingImage={EmptyCart} Text="Your cart is empty" Alt="Empty cart" />
+          <Nothing NothingImage={EmptyCart} Text="Your cart is empty" Alt="Empty cart" />
         ) : (
           <div className={styles.cartItemsList}>
             {cartItems.map((item) => (
@@ -149,13 +207,27 @@ export default function CartComponent({ delivery = 50 }) {
           </div>
           
           <div className={styles.checkoutActions}>
-            <button 
-              className={styles.checkoutBtn} 
-              onClick={pay}
-              disabled={isLoading}
-            >
-              {isLoading ? <Loading /> : 'Checkout'}
-            </button>
+            {isAuth ? (
+              // Authenticated user checkout
+              <button 
+                className={styles.checkoutBtn} 
+                onClick={pay}
+                disabled={isLoading || !emailVerified}
+              >
+                {isLoading ? <Loading /> : 'Checkout'}
+              </button>
+            ) : (
+              // Non-authenticated user - login required
+              <button 
+                className={styles.checkoutBtn} 
+                onClick={handleLogin}
+                disabled={isLoading}
+              >
+                <LoginIcon style={{ marginRight: '8px' }} />
+                {isLoading ? <Loading /> : 'Login to Checkout'}
+              </button>
+            )}
+            
             <button 
               className={styles.continueShoppingBtn}
               onClick={() => closeDrawer()}

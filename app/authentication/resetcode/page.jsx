@@ -44,8 +44,6 @@ export default function ResetCode() {
 
       if (result.success) {
         toast.success(result.message || "Password reset link sent successfully!");
-        // Optionally redirect to a confirmation page or login
-        // router.push("/auth/reset-confirmation");
       } else {
         toast.error(result.message || "Failed to send reset link");
       }
@@ -58,7 +56,7 @@ export default function ResetCode() {
   };
 
   const handleLogin = () => {
-    router.push("/auth/login"); // Added /auth/ prefix for better routing
+    router.push("/authentication/login"); 
   };
 
   const handleKeyPress = (e) => {

@@ -2,7 +2,7 @@
 
 import { toast } from "sonner";
 import { useState, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Loader from "@/app/components/Loader";
 import { useAuthStore } from "@/app/store/Auth";
 import styles from "@/app/style/auth.module.css";
@@ -17,37 +17,25 @@ export default function Verification() {
   const inputRef = useRef(null);
   
   const router = useRouter();
-  const searchParams = useSearchParams();
-  
-  // Using the store functions - already correctly integrated
-  const { verifyEmail, resendVerificationCode, email: storeEmail, isAuth } = useAuthStore();
-  
-  // Get email from URL params or store
-  const email = searchParams.get('email') || storeEmail;
+  const { verifyEmail, resendVerificationCode, email, emailVerified, isAuth } = useAuthStore();
 
-  // Auto-focus input on mount
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, []);
 
-  // Redirect if already authenticated
   useEffect(() => {
-    if (isAuth) {
+    if (!isAuth) {
+      router.push("/authentication/login", { scroll: false });
+      return;
+    }
+    
+    if (emailVerified) {
       router.push("/", { scroll: false });
     }
-  }, [isAuth, router]);
+  }, [isAuth, emailVerified, router]);
 
-  // Redirect if no email available
-  useEffect(() => {
-    if (!email) {
-      toast.error("Email not found. Please register again.");
-      router.push("/auth/signup", { scroll: false });
-    }
-  }, [email, router]);
-
-  // Timer countdown
   useEffect(() => {
     let interval;
     if (resendTimer > 0) {
@@ -59,13 +47,11 @@ export default function Verification() {
   }, [resendTimer]);
 
   const validateVerificationCode = (code) => {
-    // Check if code is exactly 6 digits
-    const codeRegex = /^\d{6}$/;
-    return codeRegex.test(code);
+    return /^\d{6}$/.test(code);
   };
 
   const handleInputChange = (e) => {
-    const value = e.target.value.replace(/\D/g, ''); // Only allow digits
+    const value = e.target.value.replace(/\D/g, '');
     if (value.length <= 6) {
       setVerificationCode(value);
     }
@@ -86,12 +72,6 @@ export default function Verification() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!email) {
-      toast.error("Email not found. Please register again.");
-      router.push("/auth/signup", { scroll: false });
-      return;
-    }
-
     if (!verificationCode.trim()) {
       toast.error("Verification code is required");
       return;
@@ -102,7 +82,6 @@ export default function Verification() {
       return;
     }
 
-    // Limit attempts to prevent abuse
     if (attempts >= 5) {
       toast.error("Too many failed attempts. Please request a new code.");
       return;
@@ -115,23 +94,11 @@ export default function Verification() {
 
       if (result.success) {
         toast.success(result.message || "Email verified successfully!");
-        setVerificationCode(""); // Clear the code
-        
-        // Delay redirect to show success message
-        setTimeout(() => {
-          router.push("/", { scroll: false });
-        }, 1500);
       } else {
         setAttempts(prev => prev + 1);
         toast.error(result.message || "Invalid verification code. Please try again.");
-        
-        // Clear code on error for better UX
         setVerificationCode("");
-        
-        // Refocus input
-        if (inputRef.current) {
-          inputRef.current.focus();
-        }
+        inputRef.current?.focus();
       }
     } catch (error) {
       console.error("Verification error:", error);
@@ -144,32 +111,22 @@ export default function Verification() {
   };
 
   const handleResendCode = async () => {
-    if (!email) {
-      toast.error("Email not found. Please register again.");
-      router.push("/auth/signup", { scroll: false });
-      return;
-    }
-
     if (resendTimer > 0) {
       toast.error(`Please wait ${resendTimer} seconds before resending.`);
       return;
     }
 
     setIsResending(true);
-    setAttempts(0); // Reset attempts on resend
+    setAttempts(0);
 
     try {
       const result = await resendVerificationCode(email);
 
       if (result.success) {
         toast.success(result.message || "Verification code sent successfully!");
-        setResendTimer(60); // 60 second cooldown
-        setVerificationCode(""); // Clear current code
-        
-        // Refocus input
-        if (inputRef.current) {
-          inputRef.current.focus();
-        }
+        setResendTimer(60);
+        setVerificationCode("");
+        inputRef.current?.focus();
       } else {
         toast.error(result.message || "Failed to resend verification code");
       }
@@ -181,17 +138,25 @@ export default function Verification() {
     }
   };
 
-  const handleChangeEmail = () => {
-    router.push("/auth/signup", { scroll: false });
+  const maskEmail = (email) => {
+    if (!email) return 'your email';
+    const [localPart, domain] = email.split('@');
+    if (localPart.length <= 2) return email;
+    return `${localPart.slice(0, 2)}***@${domain}`;
   };
 
-  const isFormValid = () => {
-    return validateVerificationCode(verificationCode) && email && attempts < 5;
-  };
+  // Don't render if not authenticated
+  if (!isAuth || emailVerified) {
+    return (
+      <div className={styles.authWrapper}>
+        <div className={styles.formContainer}>
+          <Loader />
+        </div>
+      </div>
+    );
+  }
 
-  const getPlaceholderText = () => {
-    return verificationCode.length === 0 ? "Enter 6-digit code" : "● ".repeat(verificationCode.length) + "○ ".repeat(6 - verificationCode.length);
-  };
+  const isFormValid = validateVerificationCode(verificationCode) && attempts < 5;
 
   return (
     <div className={styles.authWrapper}>
@@ -200,7 +165,7 @@ export default function Verification() {
           <h1>Verify your account</h1>
           <p>
             We&apos;ve sent a 6-digit verification code to{" "}
-            <strong>{email ? email.replace(/(.{2})(.*)(@.*)/, '$1***$3') : 'your email'}</strong>
+            <strong>{maskEmail(email)}</strong>
           </p>
           {attempts > 0 && attempts < 5 && (
             <small style={{ color: 'orange' }}>
@@ -217,7 +182,6 @@ export default function Verification() {
         <div className={styles.authInput}>
           <VerificationIcon
             className={styles.authIcon}
-            alt="Verification code icon"
             width={20}
             height={20}
           />
@@ -226,7 +190,7 @@ export default function Verification() {
             type="text"
             name="verificationCode"
             id="verificationCode"
-            placeholder={getPlaceholderText()}
+            placeholder="Enter 6-digit code"
             value={verificationCode}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
@@ -247,26 +211,12 @@ export default function Verification() {
           />
         </div>
 
-        {/* Code length indicator */}
-        <div className={styles.codeIndicator}>
-          {Array.from({ length: 6 }, (_, index) => (
-            <div 
-              key={index}
-              className={`${styles.codeBox} ${
-                index < verificationCode.length ? styles.filled : ''
-              }`}
-            >
-              {verificationCode[index] || ''}
-            </div>
-          ))}
-        </div>
-
         <div className={styles.authBottomBtn}>
           <button
             type="submit"
-            disabled={isLoading || !isFormValid()}
+            disabled={isLoading || !isFormValid}
             className={`${styles.formAuthButton} ${
-              isLoading || !isFormValid() ? styles.disabled : ""
+              isLoading || !isFormValid ? styles.disabled : ""
             }`}
           >
             {isLoading ? <Loader /> : "Verify Account"}
@@ -275,9 +225,9 @@ export default function Verification() {
           <button
             type="button"
             onClick={handleResendCode}
-            disabled={isResending || !email || resendTimer > 0}
+            disabled={isResending || resendTimer > 0}
             className={`${styles.resendButton} ${
-              isResending || !email || resendTimer > 0 ? styles.disabled : ""
+              isResending || resendTimer > 0 ? styles.disabled : ""
             }`}
           >
             {isResending ? (
@@ -292,27 +242,6 @@ export default function Verification() {
           </button>
         </div>
 
-        {/* Additional options */}
-        <div className={styles.verificationOptions}>
-          <p>
-            Wrong email address?{" "}
-            <span 
-              className={styles.btnLoginContainer}
-              onClick={handleChangeEmail}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleChangeEmail();
-                }
-              }}
-            >
-              Change email
-            </span>
-          </p>
-        </div>
-
-        {/* Help text */}
         <div className={styles.helpText}>
           <small>
             Didn&apos;t receive the code? Check your spam folder or try resending.

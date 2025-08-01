@@ -1,53 +1,11 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
+import { useCategoryStore } from "@/app/store/category";
 import styles from "@/app/style/category.module.css";
 import { MdOutlineKeyboardArrowLeft as LeftIcon } from "react-icons/md";
 import { MdOutlineKeyboardArrowRight as RightIcon } from "react-icons/md";
-
-const MOCK_CATEGORIES = [
-  {
-    id: 1,
-    name: "Appliances",
-    href: "/categories/kitchen-appliances",
-    image:
-      "https://cdn.pixabay.com/photo/2018/02/22/15/41/wood-3173282_640.jpg",
-  },
-  {
-    id: 2,
-    name: "Cookware",
-    href: "/categories/cookware",
-    image: "https://cdn.pixabay.com/photo/2017/07/04/07/31/pan-2470217_640.jpg",
-  },
-  {
-    id: 3,
-    name: "Dinnerware",
-    href: "/categories/dinnerware",
-    image:
-      "https://cdn.pixabay.com/photo/2020/02/07/07/18/kitchen-4826379_640.jpg",
-  },
-  {
-    id: 4,
-    name: "Storage",
-    href: "/categories/storage",
-    image:
-      "https://cdn.pixabay.com/photo/2020/02/07/07/18/kitchen-4826379_640.jpg",
-  },
-  {
-    id: 5,
-    name: "Utensils",
-    href: "/categories/utensils",
-    image:
-      "https://cdn.pixabay.com/photo/2020/02/07/07/18/kitchen-4826379_640.jpg",
-  },
-  {
-    id: 6,
-    name: "Bakeware",
-    href: "/categories/bakeware",
-    image:
-      "https://cdn.pixabay.com/photo/2020/02/07/07/18/kitchen-4826379_640.jpg",
-  },
-];
 
 const CategorySkeleton = () => (
   <div className={styles.categoryImageContainer}>
@@ -59,24 +17,16 @@ export default function Category() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [hasOverflow, setHasOverflow] = useState(false);
   const [maxScroll, setMaxScroll] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [categories, setCategories] = useState([]);
   const gridRef = useRef(null);
 
-  // Simulate loading categories
+  const { categories, loading, error, fetchCategories } = useCategoryStore();
+
   useEffect(() => {
-    const loadCategories = async () => {
-      setIsLoading(true);
-
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      setCategories(MOCK_CATEGORIES);
-      setIsLoading(false);
-    };
-
-    loadCategories();
-  }, []);
+    fetchCategories({
+      sortBy: 'sortOrder',
+      sortOrder: 'asc'
+    });
+  }, [fetchCategories]);
 
   useEffect(() => {
     const checkOverflow = () => {
@@ -97,7 +47,7 @@ export default function Category() {
   }, [categories]);
 
   const handlePrevious = () => {
-    if (!hasOverflow || isLoading) return;
+    if (!hasOverflow || loading) return;
 
     const scrollAmount = 300;
     const newPosition = Math.max(0, scrollPosition - scrollAmount);
@@ -112,7 +62,7 @@ export default function Category() {
   };
 
   const handleNext = () => {
-    if (!hasOverflow || isLoading) return;
+    if (!hasOverflow || loading) return;
 
     const scrollAmount = 100;
     const newPosition = Math.min(maxScroll, scrollPosition + scrollAmount);
@@ -126,8 +76,21 @@ export default function Category() {
     }
   };
 
-  const canGoPrevious = hasOverflow && scrollPosition > 0 && !isLoading;
-  const canGoNext = hasOverflow && scrollPosition < maxScroll && !isLoading;
+  const canGoPrevious = hasOverflow && scrollPosition > 0 && !loading;
+  const canGoNext = hasOverflow && scrollPosition < maxScroll && !loading;
+
+  if (error) {
+    return (
+      <section className={styles.Categorycontainer}>
+        <div className={styles.CategoryHeader}>
+          <h1>Filter by Category</h1>
+        </div>
+        <div className={styles.errorMessage}>
+          <p>Failed to load categories. Please try again later.</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={styles.Categorycontainer}>
@@ -161,17 +124,21 @@ export default function Category() {
         ref={gridRef}
         className={styles.categoriesGrid}
         onScroll={() => {
-          if (gridRef.current && !isLoading) {
+          if (gridRef.current && !loading) {
             setScrollPosition(gridRef.current.scrollLeft);
           }
         }}
       >
-        {isLoading
+        {loading || categories.length === 0
           ? Array.from({ length: 6 }).map((_, index) => (
               <CategorySkeleton key={index} />
             ))
           : categories.map((category) => (
-              <div key={category.id} className={styles.categoryImageContainer}>
+              <Link 
+                key={category._id} 
+                href={`/categories/${category.slug}`}
+                className={styles.categoryImageContainer}
+              >
                 <div className={styles.categoryWrapperImage}>
                   <Image
                     src={category.image}
@@ -182,7 +149,7 @@ export default function Category() {
                   />
                 </div>
                 <h3 className={styles.categoryName}>{category.name}</h3>
-              </div>
+              </Link>
             ))}
       </div>
     </section>

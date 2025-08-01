@@ -13,17 +13,15 @@
 }
 
 .mobileMenuContent {
-  width: 300px;
+  width: 90%;
   height: 100vh;
-  background-color: var(--background-color);
-  box-shadow: var(--shadow-light);
   overflow-y: auto;
   position: relative;
+  box-shadow: var(--shadow-light);
   transition: transform 0.3s ease-out;
-  border: 2px solid saddlebrown;
+  background-color: var(--background-color);
 }
 
-/* Slide animations - similar to cart drawer */
 .slideIn {
   transform: translateX(0);
   animation: mobileMenuSlideIn 0.3s ease-out forwards;
@@ -129,6 +127,7 @@
 
   .cartPrice {
     top: 5px;
+    text-wrap: nowrap;
     font-size: 0.9rem;
     position: relative;
     display: none;
@@ -186,7 +185,6 @@
     gap: 10px;
     display: flex;
     margin: 10px;
-    padding: 10px;
     border-radius: 10px;
     align-items: center;
     flex-direction: column;
@@ -438,6 +436,7 @@
   .profileImg {
     width: 100%;
     height: 100%;
+    border-radius: inherit;
   }
 
   .dropdown {
@@ -613,8 +612,6 @@
   }
 }
 
-/* Mobile-specific Navigation Drawer Styles */
-@media screen and (max-width: 767px) {
   .navigationLinks {
     gap: 0;
     margin: 0;
@@ -646,8 +643,8 @@
     position: static;
     width: 100%;
     height: auto;
+    animation: dropdownFadeIn 0.3s ease-out;
     background-color: var(--background-secondary);
-    animation: none;
     border-left: 4px solid var(--secondary-color);
     border-bottom: none;
   }
@@ -730,23 +727,41 @@
     line-height: 1.4;
   }
 
-  /* Mobile menu header */
   .mobileMenuHeader {
-    padding: 20px;
-    border-bottom: 2px solid var(--border-color);
-    background-color: var(--background-color);
+    background-color: var(--secondary-color);
+    justify-content: space-between;
+    margin-bottom: 20px;
+    align-items: center;
     position: sticky;
-    top: 0;
+    display: flex;
+    padding: 10px;
     z-index: 10;
+    top: 0;
   }
 
-  .mobileMenuTitle {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    text-align: center;
+  .mobileMenuLogo {
+    gap: 10px;
+    display: flex;
+    align-items: center;
   }
-}
+
+  .mobileMenuLogo h1 {
+    font-size: 1rem;
+    color: var(--background-color);
+  }
+
+  .mobileMenuClose {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+  }
+
+  .closeIcon {
+    color: var(--background-color);
+  }
+
+
 
 /* Tablet & Small Laptop Screens - 768px+ (48em+) */
 @media only screen and (min-width: 48em) {
@@ -781,6 +796,7 @@
     gap: 30px;
     margin: 0;
     padding: 0;
+    padding: 10px;
     border-radius: 0;
     box-shadow: none;
     flex-direction: row;
@@ -793,6 +809,7 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    border-bottom: none;
   }
 
   .navItemLinkContainer {
@@ -812,15 +829,15 @@
 
   .navLink:hover {
     color: var(--secondary-color);
+    background-color: transparent;
   }
 
   .dropdown {
     position: fixed;
-    top: 170px;
+    top: 180px;
     left: 0;
     width: 100vw;
     background-color: var(--background-color);
-    animation: dropdownFadeIn 0.3s ease-out;
     border-left: none;
     border-bottom: 1px solid var(--border-color);
   }
